@@ -1,0 +1,140 @@
+/* ============================================================
+   Pending & Incomplete Retirements
+   (Banner uses .page-header-banner from kyc.css)
+   ============================================================ */
+
+:root {
+    --text: #111827;
+    --muted: #6b7280;
+    --border: rgba(17, 24, 39, .08);
+}
+
+/* ── Card Grid ────────────────────────────────────────────── */
+.await-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 1200px) { .await-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 576px)  { .await-grid { grid-template-columns: 1fr; } }
+
+/* ── Department Card ──────────────────────────────────────── */
+.await-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 20px;
+    box-shadow: 0 4px 16px rgba(17, 24, 39, .06);
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.await-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, rgba(234, 88, 12, .95), rgba(234, 88, 12, .35));
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+}
+
+.await-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, transparent 60%, rgba(17, 24, 39, .02) 85%, rgba(17, 24, 39, .05) 100%);
+}
+
+.await-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(234, 88, 12, .3);
+    box-shadow: 0 14px 32px rgba(17, 24, 39, .12);
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ── Card Inner ───────────────────────────────────────────── */
+.await-card-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+}
+
+.await-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff7ed;
+    border: 1px solid #ffedd5;
+    flex-shrink: 0;
+}
+
+.await-icon svg {
+    width: 20px;
+    height: 20px;
+    color: #9a3412;
+    stroke: #9a3412;
+}
+
+.await-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.await-name {
+    font-weight: 800;
+    font-size: .9rem;
+    color: var(--text);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.await-sub {
+    font-size: .75rem;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+.await-count {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -.5px;
+    flex-shrink: 0;
+}
+
+/* ── Empty State ──────────────────────────────────────────── */
+.await-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--muted);
+    font-size: .9rem;
+}
+
+/* ── Dark Mode ────────────────────────────────────────────── */
+[data-theme-mode="dark"] .await-card {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, .08);
+}
+
+[data-theme-mode="dark"] .await-icon {
+    background: rgba(234, 88, 12, .15);
+    border-color: rgba(234, 88, 12, .25);
+}
