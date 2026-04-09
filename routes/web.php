@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\TVS\TvsWebController;
 use Illuminate\Support\Facades\Route;
 
 // Language switcher
@@ -36,5 +37,33 @@ Route::middleware('auth')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::patch('mark-all-read', 'markAllAsRead')->name('mark-all-read');
         Route::patch('{id}/read', 'markAsRead')->name('read');
+    });
+
+    // TVS Service Management System
+    Route::prefix('tvs')->name('tvs.')->controller(TvsWebController::class)->group(function () {
+        Route::get('/', 'dashboard')->name('dashboard');
+
+        // Vehicles
+        Route::get('vehicles', 'vehicles')->name('vehicles');
+        Route::get('vehicles/{id}', 'vehicleShow')->name('vehicles.show');
+
+        // Parties / Customers
+        Route::get('parties', 'parties')->name('parties');
+        Route::get('parties/create', 'partyCreate')->name('parties.create');
+        Route::get('parties/{id}', 'partyShow')->name('parties.show');
+
+        // Job Cards
+        Route::get('job-cards', 'jobCards')->name('job-cards');
+        Route::get('job-cards/create', 'jobCardCreate')->name('job-cards.create');
+        Route::get('job-cards/{id}', 'jobCardShow')->name('job-cards.show');
+
+        // Gate Passes
+        Route::get('gate-passes', 'gatePasses')->name('gate-passes');
+
+        // Warranties
+        Route::get('warranties', 'warranties')->name('warranties');
+
+        // Reports
+        Route::get('reports', 'reports')->name('reports');
     });
 });
