@@ -85,6 +85,23 @@
                 </ul>
             </li>
 
+<li class="nav-item" style="position:relative;">
+              
+<a href="{{ route('customers.index') }}" class="nav-link {{ request()->routeIs('customers.index') ? 'nav-active' : '' }}"
+   style="padding: 13px 20px; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.875rem; border-radius: 0; border-bottom: 3px solid {{ request()->routeIs('customers.index') ? '#1e2d6b' : 'transparent' }}; color: {{ request()->routeIs('customers.index') ? '#1e2d6b' : '#6b7280' }}; white-space: nowrap; margin-bottom: -2px; text-decoration: none;">
+    <i class="bx bx-wrench" style="font-size: 1.15rem;"></i>
+    <span>Customers</span>
+</a></li>
+<li class="nav-item" style="position:relative;">
+              
+<a href="{{ route('tvs.job-cards.create') }}" class="nav-link {{ request()->routeIs('tvs.job-cards.create') ? 'nav-active' : '' }}"
+   style="padding: 13px 20px; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.875rem; border-radius: 0; border-bottom: 3px solid {{ request()->routeIs('tvs.job-cards.create') ? '#1e2d6b' : 'transparent' }}; color: {{ request()->routeIs('tvs.job-cards.create') ? '#1e2d6b' : '#6b7280' }}; white-space: nowrap; margin-bottom: -2px; text-decoration: none;">
+    <i class="bx bx-wrench" style="font-size: 1.15rem;"></i>
+    <span>Vehicles</span>
+</a></li>
+
+
+
         </ul>
     </div>
 </nav>

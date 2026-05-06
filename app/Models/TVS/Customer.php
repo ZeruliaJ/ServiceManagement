@@ -5,13 +5,11 @@ use Illuminate\Database\Eloquent\Model;
 class Customer extends Model
 {
     protected $fillable = [
-        'name',
-        'contact',
-        'location',
-        'branch',
-        'registration_no',
-        'status',
-    ];
+    'customer_code', 'first_name', 'last_name', 'email',
+    'phone_number', 'alternate_phone', 'address_line1', 'address_line2',
+    'city', 'state', 'pincode', 'customer_type', 'status',
+    'registration_date', 'notes',
+];
 
     // Relationships (optional but recommended)
     public function vehicles()
@@ -19,8 +17,9 @@ class Customer extends Model
         return $this->hasMany(Vehicle::class);
     }
 
-    public function serviceHistory()
+  /*  public function serviceHistory()
     {
         return $this->hasMany(ServiceHistory::class);
-    }
+    } */
+        
 }

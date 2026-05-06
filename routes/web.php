@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/tvs/customer/search', [TvsWebController::class, 'searchCustomer'])->name('tvs.customer.search');
+Route::post('/customers', [CustomerController::class, 'store'])
+    ->name('customers.store');
 Route::resource('customers', CustomerController::class);
 // Language switcher
 Route::get('/lang/{locale}', function ($locale) {
@@ -20,6 +22,8 @@ Route::get('/lang/{locale}', function ($locale) {
     session(['locale' => $locale]);
     return redirect()->back();
 })->name('set-locale');
+
+Route::post('/generate-customer-code', [CustomerController::class, 'generateCustomerCode']);
 
 // Redirect root to login
 Route::get('/', function () {

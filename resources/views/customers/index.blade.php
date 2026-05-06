@@ -139,27 +139,43 @@
                     <tbody>
                         @forelse($customers as $customer)
                             <tr>
-                                <td>#{{ $customer->id }}</td>
-                                <td class="fw-700">{{ $customer->name }}</td>
-                                <td>{{ $customer->contact }}</td>
-                                <td>{{ $customer->location }}</td>
-                                <td>{{ $customer->branch }}</td>
-                                <td>{{ $customer->registration_no ?? '—' }}</td>
-                                <td>{{ $customer->vehicles_count ?? 0 }}</td>
-                                <td>{{ $customer->service_history_count ?? 0 }}</td>
-                                <td>
-                                    @if($customer->status == 'active')
-                                        <span class="badge-active">ACTIVE</span>
-                                    @else
-                                        <span class="badge-inactive">INACTIVE</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <a href="{{ route('customers.show', $customer->id) }}"
-                                       class="action-btn btn-view">
-                                        <i class="bx bx-show"></i>
-                                    </a>
+                               <td>{{ $customer->customer_code }}</td>
+<td class="fw-700">{{ $customer->first_name }} {{ $customer->last_name }}</td>
+<td>{{ $customer->phone_number }}</td>
+<td>{{ $customer->city }}, {{ $customer->state }}</td>
+<td>{{ $customer->customer_type }}</td>
+<td>{{ $customer->registration_date ? \Carbon\Carbon::parse($customer->registration_date)->format('d-M-Y') : '—' }}</td>
+<td>
+    @if($customer->vehicles_count > 0)
+        <span title="{{ $customer->vehicles->pluck('vehicle_model')->join(', ') }}">
+            {{ $customer->vehicles_count }} 
+            ({{ $customer->vehicles->pluck('vehicle_model')->join(', ') }})
+        </span>
+    @else
+        <span class="text-muted">0</span>
+    @endif
+</td>
 
+{{-- Last Service column --}}
+<td>
+    @php
+        $lastService = $customer->vehicles->whereNotNull('last_service_date')->sortByDesc('last_service_date')->first();
+    @endphp
+    {{ $lastService ? \Carbon\Carbon::parse($lastService->last_service_date)->format('d-M-Y') : '—' }}
+</td>
+<td>
+    @if($customer->status == 'active')
+        <span class="badge-active">ACTIVE</span>
+    @else
+        <span class="badge-inactive">INACTIVE</span>
+    @endif
+</td>
+                                <td>
+                                   <a href="javascript:void(0)"
+   class="action-btn btn-view"
+   onclick="viewCustomer({{ $customer->id }})">
+    <i class="bx bx-show"></i>
+</a>
                                     <a href="{{ route('customers.edit', $customer->id) }}"
                                        class="action-btn btn-edit">
                                         <i class="bx bx-edit"></i>
@@ -190,4 +206,43 @@
     </div>
 
 </div>
+<div class="modal fade" id="customerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius:12px;border:none;">
+            <div class="modal-header" style="background:linear-gradient(135deg,#1e2d6b,#c0172b);border-radius:12px 12px 0 0;">
+                <h6 class="modal-title text-white fw-bold">
+                    <i class="bx bx-user me-2"></i>Customer Details
+                </h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="customerModalBody">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function viewCustomer(id) {
+    $('#customerModalBody').html(`
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+    `);
+    $('#customerModal').modal('show');
+
+    $.ajax({
+        url: '/customers/' + id,
+        type: 'GET',
+        success: function (response) {
+            $('#customerModalBody').html(response);
+        },
+        error: function () {
+            $('#customerModalBody').html('<p class="text-danger text-center">Failed to load customer.</p>');
+        }
+    });
+}
+</script>
+
 </x-app-layout>
