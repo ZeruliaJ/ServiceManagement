@@ -81,8 +81,10 @@
                         <label>{{ trans('lang.email') }}</label>
                         <div class="lc-input-wrap">
                             <i class="bx bx-user lc-icon"></i>
-                            <input type="email" name="email" value="{{ old('email') }}"
-                                placeholder="{{ trans('lang.enter_email') }}" required autocomplete="off">
+                            <input type="text" name="username"
+    value="{{ old('username') }}"
+    placeholder="Enter username"
+    required autocomplete="off">
                         </div>
                     </div>
 

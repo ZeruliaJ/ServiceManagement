@@ -16,8 +16,8 @@ return [
     // ── Paneli ya Kushoto (Ukurasa wa Kuingia) ────────────────────
     'app_description'      => 'Programu ya wavuti salama na ya kisasa yenye msaada wa lugha nyingi.',
     'app_tagline'          => 'Salama. Ya kisasa. Inayotegemewa.',
-    'login_headline_1'     => 'Simamia Kila Kitu',
-    'login_headline_2'     => 'Mahali Pamoja',
+    'login_headline_1'     => 'Programu ya  ',
+    'login_headline_2'     => 'Kusimamia Huduma',
     'login_subtext'        => 'Programu ya wavuti salama na ya kisasa yenye msaada wa lugha nyingi.',
     'sign_in_to'           => 'Ingia kwenye :app',
     'enter_email'          => 'Weka Barua pepe',

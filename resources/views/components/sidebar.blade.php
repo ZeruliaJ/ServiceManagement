@@ -14,12 +14,12 @@
 
             {{-- TVS Service Dropdown --}}
             <li class="nav-item" style="position:relative;">
-                <a href="#" class="nav-link tvs-toggle {{ request()->is('tvs*') ? 'nav-active' : '' }}"
-                   style="padding: 13px 20px; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.875rem; border-radius: 0; border-bottom: 3px solid {{ request()->is('tvs*') ? '#1e2d6b' : 'transparent' }}; color: {{ request()->is('tvs*') ? '#1e2d6b' : '#6b7280' }}; white-space: nowrap; margin-bottom: -2px;">
-                    <i class="bx bx-wrench" style="font-size: 1.15rem;"></i>
-                    <span>TVS Service</span>
-                    <i class="bx bx-chevron-down ms-1 tvs-chevron" style="font-size: 0.95rem; transition: transform .2s;"></i>
-                </a>
+              
+<a href="{{ route('tvs.job-cards.create') }}" class="nav-link {{ request()->routeIs('tvs.job-cards.create') ? 'nav-active' : '' }}"
+   style="padding: 13px 20px; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.875rem; border-radius: 0; border-bottom: 3px solid {{ request()->routeIs('tvs.job-cards.create') ? '#1e2d6b' : 'transparent' }}; color: {{ request()->routeIs('tvs.job-cards.create') ? '#1e2d6b' : '#6b7280' }}; white-space: nowrap; margin-bottom: -2px; text-decoration: none;">
+    <i class="bx bx-wrench" style="font-size: 1.15rem;"></i>
+    <span>Job Card</span>
+</a>
                 <ul class="tvs-dropdown-menu" style="display:none; position:absolute; top:100%; left:0; z-index:9999; background:#fff; border-radius:10px; border:1px solid #e8e8e8; min-width:220px; padding:6px 0; box-shadow:0 4px 16px rgba(0,0,0,.1); margin-top:0; list-style:none;">
 
                     <li>

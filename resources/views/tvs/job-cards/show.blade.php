@@ -83,7 +83,8 @@
                 {{-- Vehicle & Warranty Block --}}
                 <div class="panel">
                     <div class="panel-header">
-                        <h6 class="mb-0 fw-700" style="font-size:.84rem;color:#1e2a4a;"><i class="bx bx-car me-2" style="color:#273d80;"></i>Vehicle & Warranty</h6>
+                        <h6 class="mb-0 fw-700" style="font-size:.84rem;color:#1e2a4a;">
+                            <i class="bx bx-car me-2" style="color:#273d80;"></i>Vehicle & Warranty</h6>
                         <span id="jc-vehicleTypeBadge"></span>
                     </div>
                     <div class="panel-body">
@@ -106,7 +107,7 @@
                     </div>
                     <div class="panel-body">
                         <div class="mb-2" style="font-size:.73rem;font-weight:700;color:#6b7280;text-transform:uppercase;">Service Contact</div>
-                        <div class="info-row"><span class="info-label">Name</span><span class="info-val fw-600" id="jc-custName">—</span></div>
+                        <div class="info-row"><span class="info-label">Name</span><span class="info-val fw-600" id="">—</span></div>
                         <div class="info-row"><span class="info-label">Phone</span><span class="info-val" id="jc-custPhone">—</span></div>
                         <div class="info-row"><span class="info-label">Email</span><span class="info-val" id="jc-custEmail">—</span></div>
                         <div class="mb-2 mt-2" style="font-size:.73rem;font-weight:700;color:#6b7280;text-transform:uppercase;">Bill To</div>
@@ -192,59 +193,27 @@
                     <div class="tab-pane fade" id="tab-parts">
                         <div class="panel">
                             <div class="panel-header">
-                                <h6 class="mb-0 fw-700" style="font-size:.82rem;color:#1e2a4a;"><i class="bx bx-box me-2" style="color:#273d80;"></i>Parts Consumed</h6>
-                                <button class="btn btn-sm" style="background:#273d80;color:#fff;border-radius:7px;font-size:.75rem;" data-bs-toggle="collapse" data-bs-target="#addPartForm"><i class="bx bx-plus me-1"></i>Add Part</button>
+                                <h6 class="mb-0 fw-700" style="font-size:.82rem;color:#1e2a4a;">
+                                    <i class="bx bx-box me-2" style="color:#273d80;"></i>Parts Consumed</h6>
+                                    <button class="btn btn-sm" id="btnShowAddPart" style="background:#273d80;color:#fff;border-radius:7px;font-size:.75rem;">
+                                    <i class="bx bx-plus me-1"></i>Add Part
+                                    </button>       
                             </div>
                             <div class="panel-body">
                                 {{-- Add Part Form --}}
-                                <div class="collapse mb-3" id="addPartForm">
-                                    <div style="background:#f8f9fa;border-radius:9px;padding:14px;">
-                                        <div class="row g-2">
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-600" style="font-size:.75rem;">Part <span class="text-danger">*</span></label>
-                                                <input type="text" id="partSearch" class="form-control form-control-sm" placeholder="Search part name or code...">
-                                                <select id="partId" class="form-select form-select-sm mt-1" style="display:none;"><option value="">Select part...</option></select>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label class="form-label fw-600" style="font-size:.75rem;">Part Code</label>
-                                                <input type="text" id="partCode" class="form-control form-control-sm" readonly style="background:#f0f0f0;">
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label class="form-label fw-600" style="font-size:.75rem;">Qty <span class="text-danger">*</span></label>
-                                                <input type="number" id="partQty" class="form-control form-control-sm" value="1" min="1">
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label class="form-label fw-600" style="font-size:.75rem;">Charge Type</label>
-                                                <select id="partChargeType" class="form-select form-select-sm">
-                                                    <option value="1">Chargeable</option>
-                                                    <option value="2">Warranty</option>
-                                                    <option value="3">Goodwill</option>
-                                                    <option value="4">Campaign</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label class="form-label fw-600" style="font-size:.75rem;">Reason</label>
-                                                <select id="partReason" class="form-select form-select-sm">
-                                                    <option>Replacement</option>
-                                                    <option>Adjustment</option>
-                                                    <option>Repair</option>
-                                                    <option>Preventive</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div id="partStockInfo" class="mt-2" style="font-size:.78rem;"></div>
-                                        <button id="btnAddPart" class="btn btn-sm mt-2" style="background:#273d80;color:#fff;border-radius:7px;font-size:.78rem;"><i class="bx bx-plus me-1"></i>Add to Job Card</button>
-                                    </div>
-                                </div>
-
+                                <div id="addPartForms"></div>
+                                    
+                                    <div id="partStockInfo" class="mt-2" style="font-size:.78rem;"></div>
+                                    <button id="btnAddPart" class="btn btn-sm mt-2 mb-3" style="background:#273d80;color:#fff;border-radius:7px;font-size:.78rem; display:none">
+                                    <i class="bx bx-plus me-1"></i>Add to Job Card</button>
                                 <div class="table-responsive">
                                     <table class="table parts-table mb-0">
                                         <thead>
                                             <tr>
-                                                <th>#</th><th>Part Code</th><th>Description</th><th>Warehouse</th><th>Qty</th><th>Unit Price</th><th>Amount</th><th>Charge</th>
+                                                <th>#</th><th>Part Code</th><th>Description</th><th>Warehouse</th><th>Qty</th><th>Unit Price</th><th>Amount</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="partsTbody"><tr><td colspan="8" class="text-center text-muted py-3">No parts added yet.</td></tr></tbody>
+                                        <tbody id="partsTbody"><tr><td colspan="7" class="text-center text-muted py-3">No parts added yet.</td></tr></tbody>
                                     </table>
                                 </div>
                                 <div class="d-flex justify-content-end mt-2">
@@ -258,64 +227,42 @@
                     <div class="tab-pane fade" id="tab-labour">
                         <div class="panel">
                             <div class="panel-header">
-                                <h6 class="mb-0 fw-700" style="font-size:.82rem;color:#1e2a4a;"><i class="bx bx-time me-2" style="color:#f59e0b;"></i>Labour Charges</h6>
-                                <button class="btn btn-sm" style="background:#273d80;color:#fff;border-radius:7px;font-size:.75rem;" data-bs-toggle="collapse" data-bs-target="#addLabourForm"><i class="bx bx-plus me-1"></i>Add Labour</button>
-                            </div>
-                            <div class="panel-body">
-                                <div class="collapse mb-3" id="addLabourForm">
-                                    <div style="background:#f8f9fa;border-radius:9px;padding:14px;">
-                                        <div class="row g-2">
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-600" style="font-size:.75rem;">Operation <span class="text-danger">*</span></label>
-                                                <input type="text" id="labourOpSearch" class="form-control form-control-sm" placeholder="Search operation...">
-                                                <select id="labourOpId" class="form-select form-select-sm mt-1" style="display:none;"><option value="">Select operation...</option></select>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label class="form-label fw-600" style="font-size:.75rem;">Hours <span class="text-danger">*</span></label>
-                                                <input type="number" id="labourHours" class="form-control form-control-sm" value="1" min="0.25" step="0.25">
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label class="form-label fw-600" style="font-size:.75rem;">Rate (TZS)</label>
-                                                <input type="number" id="labourRate" class="form-control form-control-sm" placeholder="0">
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label class="form-label fw-600" style="font-size:.75rem;">Charge Type</label>
-                                                <select id="labourChargeType" class="form-select form-select-sm">
-                                                    <option value="1">Chargeable</option>
-                                                    <option value="2">Warranty</option>
-                                                    <option value="3">Goodwill</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label class="form-label fw-600" style="font-size:.75rem;">Technician</label>
-                                                <select id="labourTechId" class="form-select form-select-sm">
-                                                    <option value="">Select...</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <button id="btnAddLabour" class="btn btn-sm mt-2" style="background:#273d80;color:#fff;border-radius:7px;font-size:.78rem;"><i class="bx bx-plus me-1"></i>Add Labour</button>
-                                    </div>
-                                </div>
+                                 <h6 class="mb-0 fw-700" style="font-size:.82rem;color:#1e2a4a;">
+                                     <i class="bx bx-time me-2" style="color:#f59e0b;"></i>Labour Charges
+                                </h6>
+                               <button class="btn btn-sm" id="btnShowAddLabour" style="background:#273d80;color:#fff;border-radius:7px;font-size:.75rem;">
+                                <i class="bx bx-plus me-1"></i>Add Labour
+                               </button>
+                            </div> <!-- close panel header -->
+                           <div class="panel-body">
+                            <div id="addLabourForms"></div> 
+                             <button id="btnAddLabour" class="btn btn-sm mt-2  mb-3" style="background:#273d80;color:#fff;border-radius:7px;font-size:.78rem;display:none;">
+                                   <i class="bx bx-plus me-1"></i>Add Labour To Job Card
+                             </button>
 
                                 <div class="table-responsive">
                                     <table class="table labour-table mb-0">
                                         <thead>
-                                            <tr><th>#</th><th>Operation Code</th><th>Description</th><th>Technician</th><th>Hours</th><th>Rate</th><th>Amount</th><th>Charge</th></tr>
+                                            <tr><th>#</th><th>Description</th><th>Technician</th><th>Rate</th><th>Amount</th></tr>
                                         </thead>
-                                        <tbody id="labourTbody"><tr><td colspan="8" class="text-center text-muted py-3">No labour added yet.</td></tr></tbody>
+                                        <tbody id="labourTbody"><tr><td colspan="5" class="text-center text-muted py-3">No labour added yet.</td></tr></tbody>
                                     </table>
-                                </div>
+                                </div> <!-- close table responsive -->
                                 <div class="d-flex justify-content-end mt-2">
-                                    <div style="font-size:.85rem;"><span class="text-muted">Labour Total: </span><strong id="labourTotal" style="color:#273d80;">TZS 0</strong></div>
-                                </div>
-                            </div>
-                        </div>
+                                    <div style="font-size:.85rem;"><span class="text-muted">Labour Total: </span><strong id="labourTotal" style="color:#273d80;">TZS 0</strong>
+                                 
+                                    </div>
+                                </div>  <!-- close d-flex -->
+                            </div> <!-- close panel -->
+                        </div> <!-- close tab -->
                     </div>
 
                     {{-- FINANCIAL TAB --}}
                     <div class="tab-pane fade" id="tab-financial">
                         <div class="panel">
-                            <div class="panel-header"><h6 class="mb-0 fw-700" style="font-size:.82rem;color:#1e2a4a;"><i class="bx bx-money me-2" style="color:#22c55e;"></i>Financial Summary & Payment</h6></div>
+                            <div class="panel-header">
+                                <h6 class="mb-0 fw-700" style="font-size:.82rem;color:#1e2a4a;"><i class="bx bx-money me-2" style="color:#22c55e;"></i>Financial Summary & Payment</h6>
+                            </div>
                             <div class="panel-body">
                                 <div class="row g-3">
                                     <div class="col-md-5">
@@ -334,21 +281,17 @@
                                             <div class="mb-2" style="font-size:.78rem;font-weight:700;color:#273d80;text-transform:uppercase;">Process Payment</div>
                                             <div class="mb-2">
                                                 <label class="form-label fw-600" style="font-size:.75rem;">Payment Status <span class="text-danger">*</span></label>
-                                                <select id="paymentStatus" class="form-select form-select-sm">
-                                                    <option value="1">Paid</option>
-                                                    <option value="2">Credit</option>
-                                                    <option value="3">Warranty Claim Pending</option>
-                                                    <option value="4">Finance Claim Pending</option>
-                                                </select>
+                                               <select id="paymentStatus" class="form-select form-select-sm">
+    <option value="PAID">Paid</option>
+    <option value="CREDIT">Credit</option>
+    <option value="WARRANTY_PENDING">Warranty Claim Pending</option>
+    <option value="FINANCE_PENDING">Finance Claim Pending</option>
+</select>
                                             </div>
                                             <div class="mb-2">
                                                 <label class="form-label fw-600" style="font-size:.75rem;">Payment Mode</label>
                                                 <select id="paymentMode" class="form-select form-select-sm">
-                                                    <option value="1">Cash</option>
-                                                    <option value="2">Card</option>
-                                                    <option value="3">Bank Transfer</option>
-                                                    <option value="4">Mobile Money</option>
-                                                    <option value="5">Cheque</option>
+                                                    
                                                 </select>
                                             </div>
                                             <div class="mb-2">
@@ -422,7 +365,8 @@
                     {{-- GATE PASS TAB --}}
                     <div class="tab-pane fade" id="tab-gatepass">
                         <div class="panel">
-                            <div class="panel-header"><h6 class="mb-0 fw-700" style="font-size:.82rem;color:#1e2a4a;"><i class="bx bx-door-open me-2" style="color:#f59e0b;"></i>Gate Pass & Vehicle Release</h6></div>
+                            <div class="panel-header"><h6 class="mb-0 fw-700" style="font-size:.82rem;color:#1e2a4a;">
+                                <i class="bx bx-door-open me-2" style="color:#f59e0b;"></i>Gate Pass & Vehicle Release</h6></div>
                             <div class="panel-body">
                                 <div id="gatePassGenerated" style="display:none;">
                                     <div class="row g-3 align-items-center">
@@ -508,43 +452,381 @@
 
 @push('scripts')
 <script>
+    
+function initPartSelect2($row) {
+    $row.find('.partId').select2({
+        
+        placeholder: 'Search part name or code...',
+        minimumInputLength: 2,
+        ajax: {
+            url: '/api/tvs/parts/search',
+            dataType: 'json',
+            delay: 300,
+            data: function (params) {
+                return { search: params.term };
+            },
+            processResults: function (res) {
+                if (!res.success || !res.data) return { results: [] };
+                return {
+                    results: res.data.map(function (item) {
+                        return {
+                            id:        item.ItemCode,
+                            text:      item.ItemName, 
+                            code:      item.ItemCode,
+                            name:      item.ItemName,
+                            warehouse: item.WhsCode,
+                            stock:     item.OnHand,
+                            price:     item.Price
+                        };
+                    })
+                };
+            },
+            cache: true
+        }
+    });
+}
+
+
+
+var partRowIndex = 0;
+var jcId  = {{ $jobCardId }};
+var base  = "{{ url('/api/tvs') }}";
+var webBase = "{{ url('/tvs') }}";
+
+$.get(base + '/payment-modes', function(res) {
+    var opts = res.map(function(m) {
+        return '<option value="' + m.id + '">' + m.name + '</option>';
+    });
+    $('#paymentMode').html(opts.join(''));
+});
+
+
+
+// ─── Part Row Template ──────────────────────────────────────────────────────
+function newPartRow(index) {
+    return `
+    <div class="part-row mb-2" id="partRow${index}" style="background:#f8f9fa;border-radius:9px;padding:14px;">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <label class="form-label fw-600" style="font-size:.75rem;">Part <span class="text-danger">*</span></label>
+              <select class="form-select form-select-sm partId" style="width:100%;">
+    <option value="">Search part name or code...</option>
+</select>
+                <input type="hidden" class="partWarehouse">
+                <input type="hidden" class="partPrice">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-600" style="font-size:.75rem;">Part Code</label>
+                <input type="text" class="form-control form-control-sm partCode" readonly style="background:#f0f0f0;">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-600" style="font-size:.75rem;">Qty <span class="text-danger">*</span></label>
+                <input type="number" class="form-control form-control-sm partQty" value="1" min="1">
+            </div>
+          <!--  <div class="col-md-2">
+                <label class="form-label fw-600" style="font-size:.75rem;">Charge Type</label>
+                <select class="form-select form-select-sm partChargeType">
+                    <option value="1">Chargeable</option>
+                    <option value="2">Warranty</option>
+                    <option value="3">Goodwill</option>
+                    <option value="4">Campaign</option>
+                    <option value="5">Free of Charge (FOC)</option>
+                    <option value="6">Customer Usage Feedback Trial (CUFT)</option>
+                </select>
+            </div> -->
+            <div class="col-md-3">
+                <label class="form-label fw-600" style="font-size:.75rem;">Reason</label>
+                <select class="form-select form-select-sm partReason">
+                    <option>Replacement</option>
+                    <option>Adjustment</option>
+                    <option>Repair</option>
+                    <option>Preventive</option>
+                </select>
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button class="btn btn-sm btn-danger btnRemoveRow w-100" data-row="${index}">
+                    <i class="bx bx-trash"></i>
+                </button>
+            </div>
+            <div class="col-md-12">
+                <div class="partStockInfo mt-1"></div>
+            </div>
+        </div>
+    </div>`;
+}
+
+$(document).on('input', '.partQty', function () {
+    var $row  = $(this).closest('.part-row');
+    var stock = $row.data('available-stock');
+    var qty   = parseInt($(this).val(), 10);
+
+    // Remove previous warning
+    $row.find('.stockWarning').remove();
+    $(this).removeClass('is-invalid');
+
+    if (isNaN(qty) || stock === undefined) return; // nothing to compare yet
+
+    if (qty > stock) {
+        $(this).addClass('is-invalid');
+        $(this).after(`
+            <div class="stockWarning text-danger mt-1" style="font-size:.78rem;">
+                <i class="bx bx-error-circle me-1"></i>
+                Quantity exceeds available stock — only <strong>${stock}</strong> units in warehouse.
+            </div>
+        `);
+    }
+});
+
+// Show add part row
+$('#btnShowAddPart').on('click', function () {
+    partRowIndex++;
+    $('#addPartForms').append(newPartRow(partRowIndex));
+     var $newRow = $('#partRow' + partRowIndex);  
+    initPartSelect2($newRow);
+   $('#btnAddPart').show();
+  
+});
+
+// Remove a part row
+$(document).on('click', '.btnRemoveRow', function () {
+    $('#partRow' + $(this).data('row')).remove();
+    if ($('.part-row').length === 0) {
+        $('#btnAddPart').hide();
+    }
+});
+
+var labourRowIndex = 0;
+
+function newLabourRow(index) {
+    return `
+    <div class="labour-row mb-2" id="labourRow${index}" style="background:#f8f9fa;border-radius:9px;padding:14px;">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <label class="form-label fw-600" style="font-size:.75rem;">Job to be done <span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm labourOpSearch" placeholder="Enter the job...">
+               
+            </div>
+           <!-- <div class="col-md-2">
+                <label class="form-label fw-600" style="font-size:.75rem;">Hours <span class="text-danger">*</span></label>
+                <input type="number" class="form-control form-control-sm labourHours" value="1" min="0.25" step="0.25">
+            </div> -->
+            <div class="col-md-2">
+                <label class="form-label fw-600" style="font-size:.75rem;">Rate (TZS)</label>
+                <input type="number" class="form-control form-control-sm labourRate" placeholder="0">
+            </div>
+         <!--   <div class="col-md-2">
+                <label class="form-label fw-600" style="font-size:.75rem;">Charge Type</label>
+                <select class="form-select form-select-sm labourChargeType">
+                    <option value="1">Paid Service</option>
+                    <option value="2">1st Free Service</option>
+                    <option value="3">2nd Free Service</option>
+                    <option value="4">3rd Free Service</option>
+  <option value="5">Accidental Repair</option>
+    <option value="6">General Repair</option>
+
+                </select>
+            </div> -->
+            <div class="col-md-3">
+                <label class="form-label fw-600" style="font-size:.75rem;">Technician</label>
+                <select class="form-select form-select-sm labourTechId">
+                    <option value="">Select...</option>
+                </select>
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button class="btn btn-sm btn-danger btnRemoveLabourRow w-100" data-row="${index}">
+                    <i class="bx bx-trash"></i>
+                </button>
+            </div>
+        </div>
+    </div>`;
+}
+
+// Show add labour row
+$('#btnShowAddLabour').on('click', function () {
+    labourRowIndex++;
+    $('#addLabourForms').append(newLabourRow(labourRowIndex));
+
+    let $select = $('#labourRow' + labourRowIndex).find('.labourTechId');
+    loadTechnicians($select);
+
+    $('#btnAddLabour').show();
+});
+
+// Remove a labour row
+$(document).on('click', '.btnRemoveLabourRow', function () {
+    $('#labourRow' + $(this).data('row')).remove();
+    if ($('.labour-row').length === 0) {
+        $('#btnAddLabour').hide();
+    }
+});
+
+
+// Search parts as user types
+$(document).on('input', '.partSearch', function () {
+    var $row  = $(this).closest('.part-row');
+    var query = $(this).val();
+
+    if (query.length < 2) {
+        $row.find('.partId').hide();
+        return;
+    }
+
+    $.get('/api/tvs/parts/search', { search: query }, function (res) {
+        if (!res.success || !res.data.length) return;
+
+        var $select = $row.find('.partId');
+        $select.empty().append('<option value="">Select part...</option>');
+
+        res.data.forEach(function (item) {
+            $select.append(
+                `<option value="${item.ItemCode}"
+                    data-code="${item.ItemCode}"
+                    data-name="${item.ItemName}"
+                    data-warehouse="${item.WhsCode}"
+                    data-stock="${item.OnHand}"
+                    data-price="${item.Price}">
+                    ${item.ItemName} — ${item.ItemCode} | ${item.WhsCode} (Stock: ${item.OnHand})
+                </option>`
+            );
+        });
+
+        $select.show();
+    });
+});
+
+// When a part is selected from dropdown
+$(document).on('select2:select', '.partId', function (e) {
+    var $row = $(this).closest('.part-row');
+    var item = e.params.data;
+
+    $row.find('.partCode').val(item.code || '');
+    $row.find('.partWarehouse').val(item.warehouse);  // ✅ this was missing
+    $row.find('.partPrice').val(item.price);
+
+    // Remove old warning, reset qty
+    $row.find('.stockWarning').remove();
+    $row.find('.partQty').removeClass('is-invalid');
+    $row.data('available-stock', item.stock);
+
+    $row.find('.partStockInfo').html(`
+        <span style="color:#273d80;font-size:.78rem;">
+            <i class="bx bx-info-circle me-1"></i>
+            Warehouse: <strong>${item.warehouse}</strong> &nbsp;|&nbsp;
+            Stock: <strong>${item.stock}</strong> &nbsp;|&nbsp;
+            Price: <strong>TZS ${item.price}</strong>
+        </span>
+    `);
+});
+function loadTechnicians(selectElement) {
+    fetch('/api/tvs/technicians')
+        .then(res => res.json())
+        .then(data => {
+            let options = `<option value="">Select...</option>`;
+
+            data.forEach(tech => {
+                options += `<option value="${tech.id}">${tech.name}</option>`;
+            });
+
+            selectElement.html(options);
+        });
+}
+
+
 $(function () {
-    var jcId = {{ $jobCardId }};
-    var base = "{{ url('/api/tvs') }}";
-    var jcData = null;
+
+    var jcData         = null;
     var currentSigType = '';
+
+    // Add parts to job card
+$('#btnAddPart').on('click', function () {
+    var parts = [];
+    var valid = true;
+    $('.part-row').each(function () {
+        var partId    = $(this).find('.partId').val();
+        var qty       = $(this).find('.partQty').val();
+        var chargeType = $(this).find('.partChargeType').val();
+        var reason    = $(this).find('.partReason').val();
+        var warehouse = $(this).find('.partWarehouse').val();
+        var partName = $(this).find('.partId').select2('data')[0]?.text || '';
+        var unitPrice = $(this).find('.partPrice').val();
+        if (!partId || !qty) {
+            valid = false;
+            $(this).find('.partSearch').css('border-color', 'red');
+            return;
+        }
+
+        parts.push({
+            part_id:       partId,
+            part_name:     partName,
+            unit_price:    unitPrice,
+            warehouse_id:  warehouse,
+            quantity:      qty,
+            charge_type_id: chargeType || null,
+            reason:        reason
+        });
+    });
+
+    if (!valid || parts.length === 0) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+
+    $('#btnAddPart').prop('disabled', true).html('<i class="bx bx-loader bx-spin me-1"></i>Saving...');
+
+    $.post(base + '/job-cards/' + jcId + '/parts', {
+        parts:  parts,
+        _token: '{{ csrf_token() }}'
+    }).done(function (res) {
+        if (res.success) {
+            alert(res.message);
+            $('#addPartForms').empty();
+            $('#btnAddPart').hide().prop('disabled', false).html('<i class="bx bx-plus me-1"></i>Add to Job Card');
+            partRowIndex = 0;
+            loadJobCard();
+        } else {
+            alert(res.message);
+            $('#btnAddPart').prop('disabled', false).html('<i class="bx bx-plus me-1"></i>Add to Job Card');
+        }
+    }).fail(function (xhr) {
+        alert(xhr.responseJSON?.message || 'Error adding parts.');
+        $('#btnAddPart').prop('disabled', false).html('<i class="bx bx-plus me-1"></i>Add to Job Card');
+    });
+});
 
     function statusClass(name) {
         var m = { 'Pending': 'st-pending', 'In Progress': 'st-inprogress', 'Completed': 'st-completed', 'Delivered': 'st-delivered' };
         return m[name] || 'st-default';
     }
 
-    function fmtMoney(v) { return 'TZS ' + (parseFloat(v) || 0).toLocaleString(undefined, {minimumFractionDigits:0}); }
-
-    function loadJobCard() {
-        $.get(base + '/job-cards/' + jcId, function(res) {
-            $('#loadingState').hide();
-            if (!res.success) { $('#jcContent').html('<div class="alert alert-danger">Job card not found.</div>').show(); return; }
-            jcData = res.data;
-            renderJobCard(jcData);
-            $('#jcContent').show();
-        }).fail(function() {
-            $('#loadingState').hide();
-            $('#jcContent').html('<div class="alert alert-danger">Could not load job card.</div>').show();
-        });
+    function fmtMoney(v) {
+        return 'TZS ' + (parseFloat(v) || 0).toLocaleString(undefined, { minimumFractionDigits: 0 });
     }
 
+    
+
+    function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${day}-${months[date.getMonth()]}-${date.getFullYear()}`;
+}
+
+
+
     function renderJobCard(jc) {
+        console.log("After trial checks ", jc.after_trial_checks);
+        console.log("standard checks ", jc.checks);
         var statusName = jc.status?.name || '—';
-        $('#jc-title').text('Job Card #' + (jc.job_card_no || '—'));
-        $('#jc-sub').text('Vehicle: ' + (jc.vehicle?.registration_no || jc.vehicle?.chassis_no || '—') + '  |  Check-In: ' + (jc.check_in_date || '—'));
+      //  $('#jc-title').text('Job Card #' + (jc.job_card_no || '—'));
+      $('#jc-title').html('Job Card #' + (jc.job_card_no || '—') + ' @if(auth()->user()->warehouse) | <i class="bx bx-buildings me-1"></i>{{ auth()->user()->warehouse }} @endif');
+        $('#jc-sub').text('Vehicle: ' + (jc.vehicle?.registration_no || jc.vehicle?.chassis_no || '—') + '  |  Check-In: ' + (formatDate(jc.check_in_date) || '—'));
         $('#jc-statusTag').text(statusName).removeClass().addClass('status-tag ' + statusClass(statusName));
         $('#jc-priorityTag').text(jc.priority || '—');
 
         // Workflow bar
-        var steps = ['Pending', 'In Progress', 'Completed', 'Delivered', 'Released'];
         var current = ['Pending', 'In Progress', 'Completed', 'Delivered'].indexOf(statusName);
-        ['ws-reception','ws-workshop','ws-supervisor','ws-accounts','ws-gate'].forEach(function(id, i) {
+        ['ws-reception', 'ws-workshop', 'ws-supervisor', 'ws-accounts', 'ws-gate'].forEach(function (id, i) {
             $('#' + id).removeClass('done active');
             if (i < current) $('#' + id).addClass('done');
             else if (i === current) $('#' + id).addClass('active');
@@ -560,10 +842,10 @@ $(function () {
         $('#jc-model').text((v.variant?.model_name || '—') + (v.variant?.variant_name ? ' / ' + v.variant.variant_name : ''));
         $('#jc-color').text(v.color || '—');
         $('#jc-saletype').text(v.sale_type?.name || '—');
-        $('#jc-saledate').text(v.sale_date || '—');
-
-        // Warranty (from vehicle relationships)
-        var activeW = (v.warranties || []).find(function(w) { return w.warranty_status?.name === 'Active'; });
+      //  $('#jc-saledate').text(v.sale_date || '—');
+       $('#jc-saledate').text(formatDate(v.sale_date) || '—');
+        // Warranty
+        var activeW = (v.warranties || []).find(function (w) { return w.warranty_status?.name === 'Active'; });
         $('#jc-warranty').html(activeW ? '<span class="badge-active-w">Active</span>' : '<span class="badge-expired-w">Not Active</span>');
         $('#jc-warrantyend').text(activeW ? activeW.warranty_end_date : '—');
 
@@ -574,58 +856,77 @@ $(function () {
         $('#jc-custEmail').text(cp.email || '—');
         var bp = jc.bill_to_party || {};
         $('#jc-billName').text(bp.name || '—');
-        $('#jc-billTin').text(bp.tin_no || '—');
+        $('#jc-billTin').text(bp.tax_id || '—');
         $('#jc-billAddr').text(bp.address || '—');
 
         // Service
         $('#jc-serviceType').text(jc.service_type?.name || '—');
         $('#jc-coupon').text(jc.free_service_coupon_id ? '#' + jc.free_service_coupon_id : '—');
-        $('#jc-checkin').text(jc.check_in_date || '—');
-        $('#jc-delivery').text(jc.estimated_delivery_date || '—');
+       // $('#jc-checkin').text(jc.check_in_date || '—');
+        $('#jc-checkin').text(formatDate(jc.check_in_date ) || '—');
+      //  $('#jc-delivery').text(jc.estimated_delivery_date || '—');
+        $('#jc-delivery').text(formatDate(jc.estimated_delivery_date) || '—');
         $('#jc-odometer').text(jc.odometer_in ? jc.odometer_in.toLocaleString() + ' km' : '—');
         $('#jc-fuel').text(jc.fuel_level_in || '—');
         $('#jc-complaints').text(jc.customer_complaints || '—');
 
-        // Standard Checks
+        // Checks
         renderChecks(jc.standard_checks || [], '#standardChecksBody');
         renderChecks(jc.after_trial_checks || [], '#afterTrialBody');
 
-        // Parts
+        // Parts, Labour
         renderParts(jc.parts || []);
-
-        // Labour
         renderLabour(jc.labour || []);
 
         // Financial
-        var pay = jc.payment || {};
-        var partsT = parseFloat(pay.parts_total || 0);
-        var labourT = parseFloat(pay.labour_total || 0);
+        var pay      = jc.payment || {};
+        console.log('pay:', pay);
+        console.log('full jc:', jc)
+        var partsT   = parseFloat(pay.parts_total || 0);
+        var labourT  = parseFloat(pay.labour_total || 0);
         var subtotal = partsT + labourT;
-        var tax = subtotal * 0.18;
-        var grand = subtotal + tax;
+        var tax      = subtotal * 0.18;
+        var grand    = subtotal + tax;
+
+        // Financial
+        var parts = jc.parts || [];
+        var labor = jc.labour || [];
+        var subtotal = parts.reduce(function(sum, p) {
+    return sum + (parseFloat(p.unit_price) * p.quantity);
+}, 0);
+
+        var discount = parts.reduce(function(sum, p) {
+    return sum + parseFloat(p.discount_amount || 0);
+}, 0);
+
+        var partsT = subtotal - discount;
+
+        var labourT = (jc.labour || []).reduce(function(sum, l) {
+    return sum + (parseFloat(l.amount) || 0);
+}, 0);
+
         $('#fin-parts').text(fmtMoney(partsT));
         $('#fin-labour').text(fmtMoney(labourT));
         $('#fin-subtotal').text(fmtMoney(subtotal));
         $('#fin-tax').text(fmtMoney(tax));
-        $('#fin-total').text(fmtMoney(pay.total_amount || grand));
+        $('#fin-total').text(fmtMoney(partsT + labourT));
         $('#fin-payStatus').text(pay.payment_status?.name || 'Pending');
         $('#fin-invoice').text(pay.invoice_no || '—');
         $('#partsTotal').text(fmtMoney(partsT));
         $('#labourTotal').text(fmtMoney(labourT));
 
-        // Signatures
+        // Signatures & Gate Pass
         renderSignatures(jc.signatures || []);
-
-        // Gate Pass
         renderGatePass(jc);
-
+console.log('created_by:', jc.created_by);
         // Meta
-        $('#meta-createdBy').text(jc.created_by || '—');
-        $('#meta-createdAt').text(jc.created_at || '—');
-        $('#meta-updatedBy').text(jc.updated_by || '—');
-        $('#meta-updatedAt').text(jc.updated_at || '—');
+       $('#meta-createdBy').text(jc.created_by || '—');
+       // $('#meta-createdBy').text(jc.created_by?.name || '—');
+        $('#meta-createdAt').text(formatDate(jc.created_at));
+        $('#meta-updatedBy').text(jc.created_by || '—');
+        $('#meta-updatedAt').text(formatDate(jc.updated_at));
 
-        // Show/hide complete button based on status
+        // Show/hide actions
         var canComplete = ['Pending', 'In Progress'].includes(statusName);
         $('#workshopActions').toggle(canComplete);
         var canPay = statusName === 'Completed';
@@ -633,74 +934,83 @@ $(function () {
     }
 
     function renderChecks(checks, selector) {
-        if (!checks || checks.length === 0) {
-            $(selector).html('<div class="text-muted" style="font-size:.82rem;">No checks recorded.</div>');
-            return;
-        }
-        var html = '';
-        checks.forEach(function(c) {
-            var cls = c.result === 'OK' ? 'check-ok' : (c.result === 'Not OK' ? 'check-notok' : '');
-            html += '<div class="check-row ' + cls + '">' +
-                '<span>' + (c.check_item || c.item || '—') + '</span>' +
-                '<span class="fw-600">' + (c.result || '—') + '</span>' +
-                '</div>';
-        });
-        $(selector).html(html);
+    if (!checks || checks.length === 0) {
+        $(selector).html('<div class="text-muted" style="font-size:.82rem;">No checks recorded.</div>');
+        return;
     }
-
+    var html = '';
+    checks.forEach(function (c) {
+        var cls = c.status === 'OK' ? 'check-ok' : (c.status === 'Not OK' ? 'check-notok' : '');
+        html += '<div class="check-row ' + cls + '">' +
+            '<span>' + (c.check_item || '—') + '</span>' +
+            '<span class="fw-600">' + (c.status || '—') + '</span>' +
+            '</div>';
+    });
+    $(selector).html(html);
+}
     function renderParts(parts) {
         if (!parts || parts.length === 0) {
-            $('#partsTbody').html('<tr><td colspan="8" class="text-center text-muted py-3">No parts added yet.</td></tr>');
+            $('#partsTbody').html('<tr><td colspan="7" class="text-center text-muted py-3">No parts added yet.</td></tr>');
             return;
         }
-        var html = '';
+        var html  = '';
         var total = 0;
-        parts.forEach(function(p, i) {
+        parts.forEach(function (p, i) {
             var amt = (p.quantity || 0) * (p.unit_price || 0);
             total += amt;
             html += '<tr>' +
-                '<td>' + (i+1) + '</td>' +
+                '<td>' + (i + 1) + '</td>' +
                 '<td class="fw-600" style="color:#273d80;">' + (p.part?.part_code || '—') + '</td>' +
-                '<td>' + (p.part?.name || '—') + '</td>' +
+                '<td>' + (p.part?.part_name || '—') + '</td>' +
                 '<td>' + (p.warehouse?.name || '—') + '</td>' +
                 '<td>' + (p.quantity || 0) + '</td>' +
                 '<td>' + fmtMoney(p.unit_price) + '</td>' +
                 '<td class="fw-600">' + fmtMoney(amt) + '</td>' +
-                '<td><span style="background:#e9ecef;color:#495057;font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:12px;">' + (p.charge_type?.name || '—') + '</span></td>' +
+                '<!--<td><span style="background:#e9ecef;color:#495057;font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:12px;">' + (p.charge_type?.name || '—') + '</span></td> --!>' +
                 '</tr>';
         });
         $('#partsTbody').html(html);
         $('#partsTotal').text(fmtMoney(total));
     }
 
-    function renderLabour(labour) {
-        if (!labour || labour.length === 0) {
-            $('#labourTbody').html('<tr><td colspan="8" class="text-center text-muted py-3">No labour added yet.</td></tr>');
-            return;
-        }
-        var html = '';
-        var total = 0;
-        labour.forEach(function(l, i) {
-            var amt = (l.hours || 0) * (l.rate || 0);
-            total += amt;
-            html += '<tr>' +
-                '<td>' + (i+1) + '</td>' +
-                '<td class="fw-600" style="color:#273d80;">' + (l.labour_operation?.code || '—') + '</td>' +
-                '<td>' + (l.labour_operation?.name || '—') + '</td>' +
-                '<td>' + (l.technician?.name || '—') + '</td>' +
-                '<td>' + (l.hours || 0) + ' hrs</td>' +
-                '<td>' + fmtMoney(l.rate) + '</td>' +
-                '<td class="fw-600">' + fmtMoney(amt) + '</td>' +
-                '<td><span style="background:#e9ecef;color:#495057;font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:12px;">' + (l.charge_type?.name || '—') + '</span></td>' +
-                '</tr>';
-        });
-        $('#labourTbody').html(html);
-        $('#labourTotal').text(fmtMoney(total));
+   function renderLabour(labour) {
+    if (!labour || labour.length === 0) {
+        $('#labourTbody').html('<tr><td colspan="5" class="text-center text-muted py-3">No labour added yet.</td></tr>');
+        return;
     }
+    var html  = '';
+    var total = 0;
+    labour.forEach(function (l, i) {
+         console.log('keys:', Object.keys(l));         
+    console.log('amount:', l.amount, typeof l.amount); 
+
+
+        var amt = parseFloat(l.amount) || 0;   
+        total += amt;
+        
+        html += '<tr>' +
+            '<td>' + (i + 1) + '</td>' +
+            '<td>' + (l.operation_name || '—') + '</td>' +
+            '<td>' + (l.technician?.user?.name || l.technician?.name || '—') + '</td>' +
+            '<!-- <td>' + (parseFloat(l.hours) || 0) + ' hrs</td> --!>' +
+            '<td>' + fmtMoney(parseFloat(l.rate) || 0) + '</td>' +
+            '<td class="fw-600">' + fmtMoney(amt) + '</td>' +
+            '<!-- <td><span style="background:#e9ecef;color:#495057;font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:12px;">' + (l.charge_type?.name || '—') + '</span></td> -->' +
+            '</tr>';
+    });
+    console.log ("Total ", total);
+    $('#labourTbody').html(html);
+   // $('#labourTotal').text(fmtMoney(total));
+}
 
     function renderSignatures(sigs) {
-        var types = { 'Supervisor_Authorization': 'sigBoxSupervisor', 'Customer_Authorization': 'sigBoxCustomer', 'Delivery_Certificate': 'sigBoxDelivery', 'Gate_Pass': 'sigBoxGatepass' };
-        sigs.forEach(function(s) {
+        var types = {
+            'Supervisor_Authorization': 'sigBoxSupervisor',
+            'Customer_Authorization':   'sigBoxCustomer',
+            'Delivery_Certificate':     'sigBoxDelivery',
+            'Gate_Pass':                'sigBoxGatepass'
+        };
+        sigs.forEach(function (s) {
             var boxId = types[s.signature_type];
             if (boxId) {
                 $('#' + boxId).addClass('signed').html(
@@ -713,20 +1023,23 @@ $(function () {
     }
 
     function renderGatePass(jc) {
+        console.log("Rendering gate pass");
         var gp = jc.gate_pass;
         if (gp) {
+            console.log("Gate pass generated", gp);
             $('#gatePassNotReady').hide();
             $('#gatePassGenerated').show();
             $('#gp-no').text(gp.gate_pass_no || '—');
             $('#gp-jcno').text(jc.job_card_no || '—');
             $('#gp-reg').text(jc.vehicle?.registration_no || '—');
             $('#gp-cust').text(jc.customer_party?.name || '—');
-            $('#gp-auth').text(gp.authorized_by || '—');
-            $('#gp-time').text(gp.created_at || '—');
-            var gpStatus = gp.gate_pass_status?.name || '—';
+            $('#gp-auth').text(gp.generated_by || '—');
+            $('#gp-time').text(formatDate(gp.created_at));
+            var gpStatus = gp.status?.name || '—';
             $('#gp-status').text(gpStatus).removeClass().addClass('status-tag ' + (gpStatus === 'Generated' ? 'st-inprogress' : gpStatus === 'Used' ? 'st-delivered' : 'st-default'));
             if (gpStatus === 'Generated') { $('#btnReleaseVehicle').prop('disabled', false); }
         } else {
+            console.log("Gate Pass not generated");
             $('#gatePassGenerated').hide();
             $('#gatePassNotReady').show();
             var canGenerate = jc.status?.name === 'Delivered';
@@ -734,159 +1047,233 @@ $(function () {
         }
     }
 
-    loadJobCard();
+    // ── Load Job Card 
+
+    function loadJobCard() {
+        $.get(base + '/job-cards/' + jcId, function (res) {
+            $('#loadingState').hide();
+            if (!res.success) {
+                $('#jcContent').html('<div class="alert alert-danger">Job card not found.</div>').show();
+                return;
+            }
+            jcData = res.data;
+            renderJobCard(jcData);
+            $('#jcContent').show();
+        }).fail(function () {
+            $('#loadingState').hide();
+            $('#jcContent').html('<div class="alert alert-danger">Could not load job card.</div>').show();
+        });
+    }
+
+    // ── Button Handlers ───────────────────────────────────────────────────────
 
     // Complete Job Card (Supervisor)
-    $('#btnComplete').on('click', function() {
-        var notes = $('#supervisorNotes').val();
+    $('#btnComplete').on('click', function () {
+        var notes   = $('#supervisorNotes').val();
         var remarks = $('#techRemarks').val();
         if (!confirm('Mark this job card as Completed (Supervisor Approved)?')) return;
         $(this).prop('disabled', true).html('<i class="bx bx-loader bx-spin me-1"></i>Processing...');
-        $.post(base + '/job-cards/' + jcId + '/complete', { supervisor_notes: notes, technician_remarks: remarks, _token: '{{ csrf_token() }}' })
-            .done(function(res) {
-                if (res.success) { loadJobCard(); } else { alert(res.message); }
-            })
-            .fail(function(xhr) { alert(xhr.responseJSON?.message || 'Error'); })
-            .always(function() { $('#btnComplete').prop('disabled', false).html('<i class="bx bx-check-circle me-1"></i>Mark Completed (Supervisor)'); });
+        $.post(base + '/job-cards/' + jcId + '/complete', {
+            supervisor_notes:    notes,
+            technician_remarks:  remarks,
+             signed_by_name:      '{{ auth()->user()->name }}',
+            _token:              '{{ csrf_token() }}'
+        }).done(function (res) {
+            if (res.success) { loadJobCard(); } else { alert(res.message); }
+        }).fail(function (xhr) {
+            alert(xhr.responseJSON?.message || 'Error');
+        }).always(function () {
+            $('#btnComplete').prop('disabled', false).html('<i class="bx bx-check-circle me-1"></i>Mark Completed (Supervisor)');
+        });
     });
 
     // Process Payment
-    $('#btnProcessPayment').on('click', function() {
+    $('#btnProcessPayment').on('click', function () {
         var data = {
-            payment_status_id: $('#paymentStatus').val(),
-            payment_mode_id: $('#paymentMode').val(),
-            discount_amount: $('#discountAmount').val() || 0,
-            amount_received: $('#amountReceived').val() || 0,
-            _token: '{{ csrf_token() }}'
+            payment_status: $('#paymentStatus').val(),
+            payment_mode_id:   $('#paymentMode').val(),
+            discount_amount:   $('#discountAmount').val() || 0,
+            amount_paid:   $('#amountReceived').val() || 0,
+            customer_name:   jcData.customer_party.name,   
+            _token:            '{{ csrf_token() }}'
         };
         $(this).prop('disabled', true).html('<i class="bx bx-loader bx-spin me-1"></i>Processing...');
         $.post(base + '/job-cards/' + jcId + '/process-payment', data)
-            .done(function(res) {
-                if (res.success) { loadJobCard(); $('a[href="#tab-gatepass"]').tab('show'); } else { alert(res.message); }
-            })
-            .fail(function(xhr) { alert(xhr.responseJSON?.message || 'Error processing payment.'); })
-            .always(function() { $('#btnProcessPayment').prop('disabled', false).html('<i class="bx bx-receipt me-1"></i>Process Payment & Post Invoice'); });
+            .done(function (res) {
+                if (res.success) { loadJobCard(); $('a[href="#tab-gatepass"]').tab('show'); }
+                else { alert(res.message); }
+            }).fail(function (xhr) {
+                alert(xhr.responseJSON?.message || 'Error processing payment.');
+            }).always(function () {
+                $('#btnProcessPayment').prop('disabled', false).html('<i class="bx bx-receipt me-1"></i>Process Payment & Post Invoice');
+            });
     });
 
     // Generate Gate Pass
-    $('#btnGenerateGatePass').on('click', function() {
+    $('#btnGenerateGatePass').on('click', function () {
+          console.log('clicked, jcId:', jcId);  
         $(this).prop('disabled', true).html('<i class="bx bx-loader bx-spin me-1"></i>Generating...');
-        $.post(base + '/job-cards/' + jcId + '/gate-pass', { _token: '{{ csrf_token() }}' })
-            .done(function(res) { if (res.success) { loadJobCard(); } else { alert(res.message); } })
-            .fail(function(xhr) { alert(xhr.responseJSON?.message || 'Error generating gate pass.'); })
-            .always(function() { $('#btnGenerateGatePass').prop('disabled', false).html('<i class="bx bx-qr me-2"></i>Generate Gate Pass'); });
+        var signedBy = '{{ auth()->user()->name }}';
+        console.log('signed_by_name:', signedBy);
+        $.post(base + '/job-cards/' + jcId + '/gate-pass', {
+            signed_by_name: '{{ auth()->user()->name }}',
+             _token: '{{ csrf_token() }}'
+             })
+            .done(function (res) {
+               
+                if (res.success)
+                     { loadJobCard(); 
+                        alert(res.message); 
+                     } 
+                else 
+                    { alert(res.message); }
+                 
+            }).fail(function (xhr) {
+                console.log('fail:', xhr.responseJSON);
+                alert(xhr.responseJSON?.message || 'Error generating gate pass.');
+            }).always(function () {
+                $('#btnGenerateGatePass').prop('disabled', false).html('<i class="bx bx-qr me-2"></i>Generate Gate Pass');
+            });
     });
 
     // Release Vehicle
-    $('#btnReleaseVehicle').on('click', function() {
+    $('#btnReleaseVehicle').on('click', function () {
         if (!confirm('Confirm vehicle visual check and release?')) return;
         var gp = jcData?.gate_pass;
         if (!gp) { alert('No gate pass found.'); return; }
         $(this).prop('disabled', true).html('<i class="bx bx-loader bx-spin me-1"></i>Releasing...');
-        $.post(base + '/gate-passes/' + gp.id + '/release', { _token: '{{ csrf_token() }}' })
-            .done(function(res) { if (res.success) { loadJobCard(); alert('Vehicle released successfully.'); } else { alert(res.message); } })
-            .fail(function(xhr) { alert(xhr.responseJSON?.message || 'Error'); })
-            .always(function() { $('#btnReleaseVehicle').prop('disabled', false).html('<i class="bx bx-check-shield me-2"></i>Confirm Vehicle Release'); });
-    });
-
-    // Add Part
-    var partSearchTimer;
-    $('#partSearch').on('input', function() {
-        clearTimeout(partSearchTimer);
-        var q = $(this).val().trim();
-        if (q.length < 2) return;
-        partSearchTimer = setTimeout(function() {
-            // Placeholder: would call parts search API
-            $('#partId').html('<option value="">Type more to search...</option>').show();
-        }, 400);
-    });
-
-    $('#btnAddPart').on('click', function() {
-        var partId = $('#partId').val();
-        var qty = $('#partQty').val();
-        var chargeType = $('#partChargeType').val();
-        var reason = $('#partReason').val();
-        if (!partId || !qty) { alert('Select a part and enter quantity.'); return; }
-        $.post(base + '/job-cards/' + jcId + '/parts', {
-            parts: [{ part_id: partId, quantity: qty, charge_type_id: chargeType, reason: reason }],
-            _token: '{{ csrf_token() }}'
-        }).done(function(res) { if (res.success) { loadJobCard(); $('#addPartForm').collapse('hide'); } else { alert(res.message); } })
-          .fail(function(xhr) { alert(xhr.responseJSON?.message || 'Error adding part.'); });
+        $.post(base + '/gate-passes/' + gp.id + '/release', { 
+             used_by: '{{ auth()->user()->name }}',
+            _token: '{{ csrf_token() }}' })
+            .done(function (res) {
+                if (res.success) { loadJobCard(); alert('Vehicle released successfully.'); }
+                else { alert(res.message); }
+            }).fail(function (xhr) {
+                alert(xhr.responseJSON?.message || 'Error');
+            }).always(function () {
+                $('#btnReleaseVehicle').prop('disabled', false).html('<i class="bx bx-check-shield me-2"></i>Confirm Vehicle Release');
+            });
     });
 
     // Add Labour
-    $('#btnAddLabour').on('click', function() {
-        var opId = $('#labourOpId').val();
-        var hours = $('#labourHours').val();
-        var rate = $('#labourRate').val();
-        var chargeType = $('#labourChargeType').val();
-        var techId = $('#labourTechId').val();
-        if (!hours) { alert('Enter hours.'); return; }
-        $.post(base + '/job-cards/' + jcId + '/labour', {
-            labour: [{ labour_operation_id: opId || null, hours: hours, rate: rate, charge_type_id: chargeType, technician_id: techId || null }],
-            _token: '{{ csrf_token() }}'
-        }).done(function(res) { if (res.success) { loadJobCard(); $('#addLabourForm').collapse('hide'); } else { alert(res.message); } })
-          .fail(function(xhr) { alert(xhr.responseJSON?.message || 'Error adding labour.'); });
-    });
+    $('#btnAddLabour').on('click', function () {
+    var $form      = $('#addLabourForms');
+    var opName     = $form.find('.labourOpSearch').val().trim();
+    var hours      = $form.find('.labourHours').val();
+    var rate       = $form.find('.labourRate').val();
+    var chargeType = $form.find('.labourChargeType').val();
+    var techId     = $form.find('.labourTechId').val();
+    console.log('techId:', techId, typeof techId);
+    if (!opName) { alert('Enter the job to be done.'); return; }
+   // if (!hours)  { alert('Enter hours.'); return; }
+    if (!techId) { alert('Select a technician.'); return; }
 
-    // Signature pad
+    $.post(base + '/job-cards/' + jcId + '/labour', {
+        labour: [{
+            operation_name: opName,   
+            hours:          hours,
+            rate:           rate || 0,
+            charge_type_id: chargeType || null,
+            technician_id:  techId
+        }],
+        _token: '{{ csrf_token() }}'
+    }).done(function (res) {
+        if (res.success) {
+             alert(res.message);
+             loadJobCard(); 
+             $('#addLabourForms').collapse('hide'); 
+            }
+        else { alert(res.message); }
+    }).fail(function (xhr) {
+        alert(xhr.responseJSON?.message || 'Error adding labour.');
+    });
+});
+    // ── Signature Pad ─────────────────────────────────────────────────────────
+
     var sigCtx, sigDrawing = false, sigLastX, sigLastY;
+
     function initSigPad() {
         var canvas = document.getElementById('sigPad');
         sigCtx = canvas.getContext('2d');
-        sigCtx.strokeStyle = '#1e2a4a'; sigCtx.lineWidth = 2; sigCtx.lineCap = 'round'; sigCtx.lineJoin = 'round';
-        canvas.addEventListener('mousedown', function(e) { sigDrawing = true; sigLastX = e.offsetX; sigLastY = e.offsetY; });
-        canvas.addEventListener('mousemove', function(e) {
+        sigCtx.strokeStyle = '#1e2a4a';
+        sigCtx.lineWidth   = 2;
+        sigCtx.lineCap     = 'round';
+        sigCtx.lineJoin    = 'round';
+
+        canvas.addEventListener('mousedown',  function (e) { sigDrawing = true; sigLastX = e.offsetX; sigLastY = e.offsetY; });
+        canvas.addEventListener('mousemove',  function (e) {
             if (!sigDrawing) return;
             sigCtx.beginPath(); sigCtx.moveTo(sigLastX, sigLastY); sigCtx.lineTo(e.offsetX, e.offsetY); sigCtx.stroke();
             sigLastX = e.offsetX; sigLastY = e.offsetY;
         });
-        canvas.addEventListener('mouseup', function() { sigDrawing = false; });
-        canvas.addEventListener('mouseleave', function() { sigDrawing = false; });
-        // Touch
-        canvas.addEventListener('touchstart', function(e) { e.preventDefault(); var t = e.touches[0]; var r = canvas.getBoundingClientRect(); sigDrawing = true; sigLastX = t.clientX - r.left; sigLastY = t.clientY - r.top; });
-        canvas.addEventListener('touchmove', function(e) { e.preventDefault(); if (!sigDrawing) return; var t = e.touches[0]; var r = canvas.getBoundingClientRect(); var x = t.clientX - r.left; var y = t.clientY - r.top; sigCtx.beginPath(); sigCtx.moveTo(sigLastX, sigLastY); sigCtx.lineTo(x, y); sigCtx.stroke(); sigLastX = x; sigLastY = y; });
-        canvas.addEventListener('touchend', function() { sigDrawing = false; });
+        canvas.addEventListener('mouseup',    function () { sigDrawing = false; });
+        canvas.addEventListener('mouseleave', function () { sigDrawing = false; });
+
+        canvas.addEventListener('touchstart', function (e) {
+            e.preventDefault(); var t = e.touches[0]; var r = canvas.getBoundingClientRect();
+            sigDrawing = true; sigLastX = t.clientX - r.left; sigLastY = t.clientY - r.top;
+        });
+        canvas.addEventListener('touchmove', function (e) {
+            e.preventDefault(); if (!sigDrawing) return;
+            var t = e.touches[0]; var r = canvas.getBoundingClientRect();
+            var x = t.clientX - r.left; var y = t.clientY - r.top;
+            sigCtx.beginPath(); sigCtx.moveTo(sigLastX, sigLastY); sigCtx.lineTo(x, y); sigCtx.stroke();
+            sigLastX = x; sigLastY = y;
+        });
+        canvas.addEventListener('touchend', function () { sigDrawing = false; });
     }
+
     initSigPad();
 
-    $('#btnClearSig').on('click', function() { sigCtx.clearRect(0, 0, 440, 180); });
+    $('#btnClearSig').on('click', function () { sigCtx.clearRect(0, 0, 440, 180); });
 
     var sigTypeMap = {
         'sigBoxSupervisor': 'Supervisor_Authorization',
-        'sigBoxCustomer': 'Customer_Authorization',
-        'sigBoxDelivery': 'Delivery_Certificate',
-        'sigBoxGatepass': 'Gate_Pass'
+        'sigBoxCustomer':   'Customer_Authorization',
+        'sigBoxDelivery':   'Delivery_Certificate',
+        'sigBoxGatepass':   'Gate_Pass'
     };
 
-    $(document).on('click', '.sig-box:not(.signed)', function() {
+    $(document).on('click', '.sig-box:not(.signed)', function () {
         currentSigType = $(this).attr('id');
-        var titles = { 'sigBoxSupervisor': 'Supervisor Authorization', 'sigBoxCustomer': 'Customer Authorization', 'sigBoxDelivery': 'Delivery Certificate', 'sigBoxGatepass': 'Gate Pass Authorization' };
+        var titles = {
+            'sigBoxSupervisor': 'Supervisor Authorization',
+            'sigBoxCustomer':   'Customer Authorization',
+            'sigBoxDelivery':   'Delivery Certificate',
+            'sigBoxGatepass':   'Gate Pass Authorization'
+        };
         $('#sigModalTitle').text(titles[currentSigType] || 'Digital Signature');
         $('#sigName').val('');
         sigCtx.clearRect(0, 0, 440, 180);
         $('#sigModal').modal('show');
     });
 
-    $('#btnSaveSig').on('click', function() {
-        var name = $('#sigName').val().trim();
-        if (!name) { alert('Please enter the signer name.'); return; }
-        var canvas = document.getElementById('sigPad');
-        var sigData = canvas.toDataURL('image/png');
-        var sigType = sigTypeMap[currentSigType] || currentSigType;
-        $.post(base + '/job-cards/' + jcId + '/complete', {
-            signature_type: sigType, signature_data: sigData, signer_name: name, _token: '{{ csrf_token() }}'
-        }).done(function(res) {
-            $('#sigModal').modal('hide');
-            loadJobCard();
-        }).fail(function() {
-            // Signature saving gracefully fails if endpoint doesn't have separate signature route
-            $('#sigModal').modal('hide');
-            loadJobCard();
-        });
+    $('#btnSaveSig').on('click', function () {
+    var name = $('#sigName').val().trim();
+    if (!name) { alert('Please enter the signer name.'); return; }
+    var canvas  = document.getElementById('sigPad');
+    var sigData = canvas.toDataURL('image/png');
+    var sigType = sigTypeMap[currentSigType] || currentSigType;
+    $.post(base + '/job-cards/' + jcId + '/signature', {
+        signature_type: sigType, 
+        signature_data: sigData, 
+        signed_by_name: name,    // was signer_name
+        _token: '{{ csrf_token() }}'
+    }).done(function () {
+        $('#sigModal').modal('hide');
+        loadJobCard();
+    }).fail(function () {
+        $('#sigModal').modal('hide');
+        loadJobCard();
     });
 });
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    loadJobCard();
+
+}); // end document ready
 </script>
 @endpush
+
 
 </x-app-layout>

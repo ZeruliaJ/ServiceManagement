@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VehicleServiceHistory extends Model
 {
+    protected $table = 'vehicle_history'; 
+
     protected $fillable = ['vehicle_id', 'service_number', 'service_date', 'branch_code', 'odometer_reading', 'remarks'];
 
     protected $casts = [

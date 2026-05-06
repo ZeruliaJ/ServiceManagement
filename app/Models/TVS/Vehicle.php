@@ -5,6 +5,7 @@ namespace App\Models\TVS;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\TVS\VehicleServiceHistory;
 
 class Vehicle extends Model
 {

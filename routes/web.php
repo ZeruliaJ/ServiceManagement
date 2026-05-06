@@ -4,8 +4,14 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TVS\TvsWebController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 
+
+
+
+Route::get('/tvs/customer/search', [TvsWebController::class, 'searchCustomer'])->name('tvs.customer.search');
+Route::resource('customers', CustomerController::class);
 // Language switcher
 Route::get('/lang/{locale}', function ($locale) {
     if (! in_array($locale, ['en', 'sw'])) {
@@ -41,6 +47,40 @@ Route::middleware('auth')->group(function () {
 
     // TVS Service Management System
     Route::prefix('tvs')->name('tvs.')->controller(TvsWebController::class)->group(function () {
+
+    Route::post('/job-cards', [TvsWebController::class, 'storeJobCard'])->name('job-cards.store');
+
+    Route::get('/proxy/search-vehicle', function () {
+    $q = trim(request('q', ''));
+    $len = strlen($q);
+
+    $query = DB::table('vehicles')
+        ->select('id', 'customer_id',
+            'chassis_number', 'engine_number', 'vehicle_model', 'color',
+            'dealer', 'invoice_number', 'registration_number',
+            'registration_date', 'warranty_status', 'warranty_end_date',
+            'last_service_date', 'purchase_date'
+        );
+
+    if ($len === 17 || str_starts_with(strtoupper($q), 'MD6')) {
+        // Chassis
+        $query->where('chassis_number', $q);
+    } elseif ($len === 12) {
+        // Engine
+        $query->where('engine_number', $q);
+    } else {
+        // Registration
+        $query->where('registration_number', $q);
+    }
+
+    $vehicle = $query->first();
+
+    if ($vehicle) {
+        return response()->json(['success' => true, 'vehicle' => $vehicle]);
+    }
+
+    return response()->json(['success' => false]);
+})->middleware('auth');
         Route::get('/', 'dashboard')->name('dashboard');
 
         // Vehicles

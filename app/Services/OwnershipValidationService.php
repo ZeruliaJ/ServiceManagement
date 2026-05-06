@@ -265,6 +265,7 @@ class OwnershipValidationService
      */
     public function searchVehicle($registrationNo = null, $chassisNo = null, $engineNo = null)
     {
+
         $query = Vehicle::query();
 
         if ($registrationNo) {
@@ -278,6 +279,7 @@ class OwnershipValidationService
         if ($engineNo) {
             $query->where('engine_no', $engineNo);
         }
+
 
         return $query->first();
     }

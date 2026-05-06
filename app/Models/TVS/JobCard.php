@@ -5,24 +5,24 @@ namespace App\Models\TVS;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\User;
 
 class JobCard extends Model
 {
-    protected $fillable = [
-        'job_card_no', 'vehicle_id', 'service_type_id', 'job_card_status_id',
-        'customer_party_id', 'bill_to_party_id', 'free_service_coupon_id',
-        'check_in_date', 'odometer_in', 'odometer_out', 'fuel_level_in',
-        'fuel_level_out', 'customer_complaints', 'estimated_delivery_date',
-        'actual_delivery_date', 'priority', 'assigned_technician_id',
-        'supervisor_notes', 'technician_remarks'
-    ];
-
-    protected $casts = [
-        'check_in_date' => 'datetime',
-        'estimated_delivery_date' => 'datetime',
-        'actual_delivery_date' => 'datetime',
-    ];
+   protected $fillable = [
+    'job_card_number', 'customer_id', 'vehicle_id', 'dealer_id',
+    'odometer_reading', 'fuel_level', 'service_type', 'free_service_number',
+    'customer_complaints', 'estimated_delivery', 'technician_id', 'supervisor_id',
+    'status', 'internal_notes', 'customer_signature_data', 'supervisor_signature_data',
+    'customer_signed_by', 'supervisor_signed_by', 'customer_consent',
+    'delivery_customer_name', 'created_by', 'assigned_to',
+];
+   protected $casts = [
+    'estimated_delivery' => 'datetime',
+    'delivery_date'      => 'datetime',
+    'completion_date'    => 'datetime',
+];
 
     public function vehicle(): BelongsTo
     {
@@ -41,7 +41,7 @@ class JobCard extends Model
 
     public function customerParty(): BelongsTo
     {
-        return $this->belongsTo(Party::class, 'customer_party_id');
+        return $this->belongsTo(Party::class, 'customer_id');
     }
 
     public function billToParty(): BelongsTo
@@ -89,11 +89,12 @@ class JobCard extends Model
         return $this->belongsTo(JobCardPayment::class, 'id', 'job_card_id');
     }
 
-    public function gatePass(): HasMany
-    {
-        return $this->hasMany(GatePass::class);
-    }
+     public function gatePass(): HasOne
+{
+    return $this->hasOne(GatePass::class);
+}
 
+  
     public function metrics(): HasMany
     {
         return $this->hasMany(JobCardMetric::class);
@@ -113,4 +114,9 @@ class JobCard extends Model
     {
         return $this->hasMany(PartReservation::class);
     }
+    public function createdBy(): BelongsTo
+{
+    return $this->belongsTo(User::class, 'created_by');
+}
+
 }

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Services;
-
+use App\Models\TVS\Warehouse;
 use App\Models\TVS\JobCard;
 use App\Models\TVS\JobCardStatus;
 use App\Models\TVS\JobCardPart;
@@ -29,24 +29,44 @@ class JobCardService
             // Generate unique job card number
             $jobCardNo = $this->generateJobCardNumber();
 
+            \Log::info('created_by: ' . auth()->id());
+           \Log::info('created_by_name: ' . ($jobCardData['created_by_name'] ?? 'NOT FOUND'));
             $jobCard = JobCard::create([
                 'job_card_no' => $jobCardNo,
+                'created_by' => $jobCardData['created_by_name'] ?? null,
                 'vehicle_id' => $jobCardData['vehicle_id'],
                 'service_type_id' => $jobCardData['service_type_id'],
                 'job_card_status_id' => JobCardStatus::where('code', 'PENDING')->first()->id,
                 'customer_party_id' => $jobCardData['customer_party_id'],
                 'bill_to_party_id' => $jobCardData['bill_to_party_id'],
+                'warehouse' => $jobCardData['warehouse'] ?? null,   
                 'free_service_coupon_id' => $jobCardData['free_service_coupon_id'] ?? null,
                 'check_in_date' => $jobCardData['check_in_date'] ?? now(),
                 'odometer_in' => $jobCardData['odometer_in'] ?? null,
+                'odometer_working' => $jobCardData['odometer_working'] ?? null,
                 'fuel_level_in' => $jobCardData['fuel_level_in'] ?? null,
                 'customer_complaints' => $jobCardData['customer_complaints'] ?? null,
                 'estimated_delivery_date' => $jobCardData['estimated_delivery_date'] ?? now()->addDays(1),
                 'priority' => $jobCardData['priority'] ?? 'Normal',
             ]);
 
-            // Add standard checks based on vehicle type
-            $this->addStandardChecks($jobCard, $vehicle);
+            // Add standard checks & after trial checks based on vehicle type
+           $this->addStandardChecks(
+    $jobCard, 
+    $vehicle, 
+    $jobCardData['standard_checks'] ?? [],
+    $jobCardData['after_trial_checks'] ?? []
+);
+
+             if (!empty($jobCardData['checks'])) {
+            foreach ($jobCardData['checks'] as $key => $result) {
+                // key format is chk_ID e.g. chk_1, chk_2
+                $checkId = str_replace('chk_', '', $key);
+                $jobCard->checks()->where('check_id', $checkId)->update([
+                    'result' => $result
+                ]);
+            }
+        }
 
             return $jobCard;
         });
@@ -58,11 +78,28 @@ class JobCardService
     public function addPartToJobCard(JobCard $jobCard, array $partData)
     {
         return DB::transaction(function () use ($jobCard, $partData) {
-            $part = Part::findOrFail($partData['part_id']);
-            $warehouse = $partData['warehouse_id'];
+$part = Part::firstOrCreate(
+    ['part_code' => $partData['part_id']], // match by part_code
+    [
+        'part_name' => $partData['part_name'] ?? $partData['part_id'],
+        'unit_price' => $partData['unit_price'] ?? 0,
+        'unit_of_measure' => 'PCS',
+        'is_active' => 1,
+    ]
+);  
+\Log::info('Part data:', $partData);          
+$warehouse = Warehouse::firstOrCreate(  
+    ['code' => $partData['warehouse_id']],
+    [
+        'name' => $partData['warehouse_id'],
+        'is_active' => 1,
+    ]
+);
+
             $quantity = $partData['quantity'];
 
             // Check stock availability
+            /*
             $stockAvailable = $part->getAvailableQuantity($warehouse);
 
             if ($stockAvailable < $quantity) {
@@ -72,11 +109,12 @@ class JobCardService
             } else {
                 $reservedQty = $quantity;
             }
-
+            */
+$reservedQty = $quantity;
             // Create part reservation
             PartReservation::create([
                 'part_id' => $part->id,
-                'warehouse_id' => $warehouse,
+                'warehouse_id' => $warehouse->id,
                 'job_card_id' => $jobCard->id,
                 'quantity_reserved' => $reservedQty,
                 'reservation_status' => 'Reserved',
@@ -88,7 +126,7 @@ class JobCardService
             return JobCardPart::create([
                 'job_card_id' => $jobCard->id,
                 'part_id' => $part->id,
-                'warehouse_id' => $warehouse,
+                'warehouse_id' => $warehouse->id,
                 'quantity' => $quantity,
                 'unit_price' => $partData['unit_price'] ?? $part->unit_price,
                 'discount_amount' => $partData['discount_amount'] ?? 0,
@@ -106,11 +144,11 @@ class JobCardService
     {
         return JobCardLabour::create([
             'job_card_id' => $jobCard->id,
-            'operation_id' => $labourData['operation_id'],
+            'operation_name' => $labourData['operation_name'],
             'technician_id' => $labourData['technician_id'],
-            'hours' => $labourData['hours'],
-            'rate' => $labourData['rate'],
-            'amount' => $labourData['hours'] * $labourData['rate'],
+           'hours'          => $labourData['hours'] ?? 0,
+    'rate'           => $labourData['rate'] ?? 0,
+    'amount'         => ($labourData['hours'] ?? 1) * ($labourData['rate'] ?? 1),
             'charge_type_id' => $labourData['charge_type_id'],
             'remarks' => $labourData['remarks'] ?? null,
         ]);
@@ -205,27 +243,27 @@ class JobCardService
     /**
      * Step 5: Gate - Generate Gate Pass
      */
-    public function generateGatePass(JobCard $jobCard)
-    {
-        if ($jobCard->status->code !== 'DELIVERED') {
-            throw new \Exception('Job card must be delivered before generating gate pass');
-        }
-
-        $gatePassNo = $this->generateGatePassNumber();
-
-        return GatePass::create([
-            'gate_pass_no' => $gatePassNo,
-            'job_card_id' => $jobCard->id,
-            'vehicle_id' => $jobCard->vehicle_id,
-            'gate_pass_status_id' => GatePassStatus::where('code', 'GENERATED')->first()->id,
-            'customer_name' => $jobCard->customerParty->name,
-            'customer_id_type' => $jobCard->customerParty->partyType->code,
-            'customer_id_no' => $jobCard->customerParty->tax_id,
-            'gate_pass_generated_date' => now(),
-            'qr_code' => $this->generateQRCode($gatePassNo, $jobCard->job_card_no),
-        ]);
+    public function generateGatePass(JobCard $jobCard, array $data = [])
+{
+    if ($jobCard->status->code !== 'DELIVERED') {
+        throw new \Exception('Job card must be delivered before generating gate pass');
     }
 
+    $gatePassNo = $this->generateGatePassNumber();
+
+    return GatePass::create([
+        'gate_pass_no' => $gatePassNo,
+        'job_card_id' => $jobCard->id,
+        'vehicle_id' => $jobCard->vehicle_id,
+        'gate_pass_status_id' => GatePassStatus::where('code', 'GENERATED')->first()->id,
+        'customer_name' => $jobCard->customerParty->name,
+        'customer_id_type' => $jobCard->customerParty->partyType->code,
+        'customer_id_no' => $jobCard->customerParty->tax_id,
+        'gate_pass_generated_date' => now(),
+        'generated_by' => $data['generated_by'] ?? null,   // add this
+        'qr_code' => $this->generateQRCode($gatePassNo, $jobCard->job_card_no),
+    ]);
+}
     /**
      * Release vehicle at gate
      */
@@ -233,7 +271,7 @@ class JobCardService
     {
         return DB::transaction(function () use ($gatePass, $releaseData) {
             $gatePass->update([
-                'gate_pass_status_id' => GatePassStatus::where('code', 'USED')->first()->id,
+                'gate_pass_status_id' => GatePassStatus::where('code', 'EXITED')->first()->id,
                 'gate_pass_used_date' => now(),
                 'used_by' => $releaseData['used_by'] ?? null,
             ]);
@@ -242,63 +280,38 @@ class JobCardService
         });
     }
 
-    /**
-     * Helper: Add standard checks based on vehicle type
-     */
-    private function addStandardChecks(JobCard $jobCard, Vehicle $vehicle)
-    {
-        $standardChecks = [
-            'Brakes Check',
-            'Horn Test',
-            'Lights Check',
-            'Tyre Condition',
-            'Fuel Tank Level',
-            'Oil Level',
-            'Coolant Level',
-            'Windscreen/Mirror Condition',
-            'Seat Condition',
-            'General Cleanliness'
-        ];
-
-        foreach ($standardChecks as $check) {
-            $jobCard->standardChecks()->create([
-                'check_item' => $check,
-                'status' => null,
-                'remarks' => null,
-            ]);
-        }
-
-        // Add after trial checks
-        $afterTrialChecks = [
-            'Brakes',
-            'Acceleration',
-            'Clutch',
-            'Vibration',
-            'Noise',
-            'Gear Shifting',
-            'Steering',
-            'Suspension'
-        ];
-
-        foreach ($afterTrialChecks as $check) {
-            $jobCard->afterTrialChecks()->create([
-                'check_item' => $check,
-                'status' => null,
-                'remarks' => null,
-            ]);
-        }
+   
+   private function addStandardChecks(JobCard $jobCard, Vehicle $vehicle, array $standardChecks = [], array $afterTrialChecks = [])
+{
+    foreach ($standardChecks as $item => $status) {
+        $jobCard->standardChecks()->create([
+            'check_item' => $item,
+            'status' => $status,
+            'remarks' => null,
+        ]);
     }
 
+    foreach ($afterTrialChecks as $item => $status) {
+        $jobCard->afterTrialChecks()->create([
+            'check_item' => $item,
+            'status' => $status,
+            'remarks' => null,
+        ]);
+    }
+}
     /**
      * Helper: Generate unique job card number
      */
-    private function generateJobCardNumber()
-    {
-        $prefix = date('Ymd');
-        $count = JobCard::where('job_card_no', 'like', $prefix . '%')->count();
-        return $prefix . '-' . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
-    }
-
+   private function generateJobCardNumber()
+{
+    $prefix = date('Ymd');
+    $last = JobCard::where('job_card_no', 'like', $prefix . '%')
+                   ->orderBy('job_card_no', 'desc')
+                   ->first();
+    
+    $next = $last ? (intval(substr($last->job_card_no, -4)) + 1) : 1;
+    return $prefix . '-' . str_pad($next, 4, '0', STR_PAD_LEFT);
+}
     /**
      * Helper: Generate invoice number
      */

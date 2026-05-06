@@ -34,11 +34,16 @@ class JobCardController extends Controller
             'bill_to_party_id' => 'required|exists:parties,id',
             'check_in_date' => 'nullable|date',
             'odometer_in' => 'nullable|integer',
+            'odometer_working' => 'nullable|in:yes,no',   
+            'warehouse' => 'nullable|string',             
             'fuel_level_in' => 'nullable|string',
             'customer_complaints' => 'nullable|string',
             'estimated_delivery_date' => 'required|date',
             'priority' => 'required|in:Normal,Urgent,Emergency',
             'free_service_coupon_id' => 'nullable|exists:free_service_coupons,id',
+           'standard_checks' => 'required|array',
+           'after_trial_checks' => 'required|array',
+           'created_by_name' => 'nullable|string'
         ]);
 
         try {
@@ -61,15 +66,30 @@ class JobCardController extends Controller
      * Get job card details
      */
     public function show(JobCard $jobCard)
-    {
+{
+    try {
         return response()->json([
             'success' => true,
             'data' => $jobCard->load([
                 'vehicle', 'serviceType', 'status', 'customerParty', 'billToParty',
-                'standardChecks', 'afterTrialChecks', 'parts', 'labour', 'signatures', 'payment'
+                'standardChecks', 'afterTrialChecks', 'parts', 'labour', 'signatures',
+                   'payment.paymentStatus',  
+    'payment.paymentMode',     
+      'gatePass.status',  
+                 'parts.part',      
+    'parts.warehouse',  
+    'parts.chargeType',
+     'labour.technician.user',  
+                'labour.chargeType'   
             ])
         ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 500);
     }
+}
 
     /**
      * Add parts to job card (Workshop step)
@@ -78,12 +98,13 @@ class JobCardController extends Controller
     {
         $validated = $request->validate([
             'parts' => 'required|array',
-            'parts.*.part_id' => 'required|exists:parts,id',
-            'parts.*.warehouse_id' => 'required|exists:warehouses,id',
+            'parts.*.part_id' => 'required|string',
+            'parts.*.part_name' => 'nullable|string',
+            'parts.*.warehouse_id' => 'required|string',
             'parts.*.quantity' => 'required|integer|min:1',
             'parts.*.unit_price' => 'nullable|numeric',
             'parts.*.discount_amount' => 'nullable|numeric',
-            'parts.*.charge_type_id' => 'required|exists:charge_types,id',
+            'parts.*.charge_type_id' => 'nullable|exists:charge_types,id',
             'parts.*.reason' => 'required|string',
         ]);
 
@@ -113,14 +134,14 @@ class JobCardController extends Controller
     {
         $validated = $request->validate([
             'labour' => 'required|array',
-            'labour.*.operation_id' => 'required|exists:labour_operations,id',
+            'labour.*.operation_name' => 'required|string|max:255',
             'labour.*.technician_id' => 'required|exists:technicians,id',
-            'labour.*.hours' => 'required|numeric|min:0.25',
+            'labour.*.hours' => 'nullable|numeric',
             'labour.*.rate' => 'required|numeric',
-            'labour.*.charge_type_id' => 'required|exists:charge_types,id',
+            'labour.*.charge_type_id' => 'nullable|exists:charge_types,id',
             'labour.*.remarks' => 'nullable|string',
         ]);
-
+        
         try {
             $addedLabour = [];
             foreach ($validated['labour'] as $labourData) {
@@ -139,7 +160,26 @@ class JobCardController extends Controller
             ], 400);
         }
     }
+//Save signatures
+public function saveSignature(JobCard $jobCard, Request $request)
+{
+    $validated = $request->validate([
+        'signature_type' => 'required|string',
+        'signature_data' => 'nullable|string',
+        'signed_by_name' => 'required|string',
+        'signed_by_id'   => 'nullable|string',
+    ]);
 
+    $jobCard->signatures()->create([
+        'signature_type' => $validated['signature_type'],
+        'signature_data' => $validated['signature_data'] ?? null,
+        'signed_by_name' => $validated['signed_by_name'],
+        'signed_by_id'   => $validated['signed_by_id'] ?? null,
+        'signed_date'    => now(),
+    ]);
+
+    return response()->json(['success' => true, 'message' => 'Signature saved']);
+}
     /**
      * Complete job card (Supervisor step)
      */
@@ -169,6 +209,7 @@ class JobCardController extends Controller
             ], 400);
         }
     }
+
 
     /**
      * Process payment (Accounts step)
@@ -252,34 +293,55 @@ class JobCardController extends Controller
     /**
      * List all job cards with filters
      */
-    public function index(Request $request)
-    {
-        $query = JobCard::query();
+   public function index(Request $request)
+{
+    $query = JobCard::query();
 
-        if ($request->has('status')) {
-            $query->whereHas('status', function($q) {
-                $q->where('code', $request->status);
-            });
-        }
-
-        if ($request->has('vehicle_id')) {
-            $query->where('vehicle_id', $request->vehicle_id);
-        }
-
-        if ($request->has('customer_party_id')) {
-            $query->where('customer_party_id', $request->customer_party_id);
-        }
-
-        $jobCards = $query->with(['vehicle', 'status', 'customerParty', 'payment'])
-            ->latest()
-            ->paginate(15);
-
-        return response()->json([
-            'success' => true,
-            'data' => $jobCards
-        ]);
+    // Filter by status name (blade sends "Pending", "In Progress" etc.)
+    if ($request->filled('status')) {
+        $query->whereHas('status', function($q) use ($request) {
+            $q->where('name', $request->status);
+        });
     }
 
+    if ($request->filled('vehicle_id')) {
+        $query->where('vehicle_id', $request->vehicle_id);
+    }
+
+    if ($request->filled('customer_party_id')) {
+        $query->where('customer_party_id', $request->customer_party_id);
+    }
+
+    // Search by job card no, vehicle reg/chassis, or customer name
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('job_card_no', 'like', "%$search%")
+              ->orWhereHas('vehicle', function($q2) use ($search) {
+                  $q2->where('registration_no', 'like', "%$search%")
+                     ->orWhere('chassis_no', 'like', "%$search%");
+              })
+              ->orWhereHas('customerParty', function($q2) use ($search) {
+                  $q2->where('name', 'like', "%$search%");
+              });
+        });
+    }
+
+    $jobCards = $query->with([
+                    'vehicle',
+                  
+                    'customerParty',  // blade uses customer_party?.name
+                   
+                    'payment',
+                ])
+                ->latest()
+                ->paginate(15);
+
+    return response()->json([
+        'success' => true,
+        'data'    => $jobCards,
+    ]);
+}
     /**
      * Update standard checks
      */

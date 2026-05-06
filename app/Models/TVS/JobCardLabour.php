@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JobCardLabour extends Model
 {
+    protected $table = 'job_card_labour';
     protected $fillable = [
-        'job_card_id', 'operation_id', 'technician_id', 'hours', 'rate',
+        'job_card_id', 'operation_name', 'technician_id', 'hours', 'rate',
         'amount', 'charge_type_id', 'remarks'
     ];
 

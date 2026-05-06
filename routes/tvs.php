@@ -1,16 +1,32 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PartController;
 use App\Http\Controllers\TVS\{
     VehicleController,
     JobCardController,
     PartyController,
     WarrantyController,
-    ReportingController
+    ReportingController,
+    ServiceTypeController
 };
 
 Route::prefix('api/tvs')->group(function () {
-    
+    Route::get('/parts/search', [PartController::class, 'searchParts']);
+
+    Route::get('/service-types', [ServiceTypeController::class, 'index']);
+    Route::post('/job-cards/{jobCard}/signature', [JobCardController::class, 'saveSignature']);
+  Route::get('/payment-modes', function() {
+    return \App\Models\TVS\PaymentMode::all();
+});
+
+  Route::get('/technicians', function () {
+    return DB::table('technicians')
+        ->join('users', 'users.id', '=', 'technicians.user_id')
+        ->where('technicians.is_active', 1)
+        ->select('technicians.id', 'users.name')
+        ->get();
+});
     // Vehicle Management
     Route::prefix('vehicles')->group(function () {
         Route::get('search', [VehicleController::class, 'search']);
@@ -59,6 +75,8 @@ Route::prefix('api/tvs')->group(function () {
         // Gate - Generate and release gate pass
         Route::post('{jobCard}/gate-pass', [JobCardController::class, 'generateGatePass']);
     });
+
+
 
     // Gate Pass Management
     Route::prefix('gate-passes')->group(function () {

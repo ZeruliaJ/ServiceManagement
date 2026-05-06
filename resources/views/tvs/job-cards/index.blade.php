@@ -11,10 +11,6 @@
     .sp-completed  { background:#d1e7dd; color:#0a3622; }
     .sp-delivered  { background:#e2d9f3; color:#432874; }
     .sp-default    { background:#e9ecef; color:#495057; }
-    .priority-badge { font-size:.68rem; font-weight:700; padding:2px 8px; border-radius:20px; }
-    .pr-normal    { background:#e9ecef; color:#495057; }
-    .pr-urgent    { background:#fff3cd; color:#856404; }
-    .pr-emergency { background:#f8d7da; color:#842029; }
     .filter-tab { padding:6px 16px; border-radius:7px; font-size:.8rem; font-weight:600; cursor:pointer; border:1px solid #e9ecef; color:#6b7280; background:#f8f9fa; transition:.18s; }
     .filter-tab.active, .filter-tab:hover { background:#273d80; color:#fff; border-color:#273d80; }
 </style>
@@ -31,10 +27,10 @@
     {{-- Status filter tabs --}}
     <div class="d-flex gap-2 mb-3 flex-wrap">
         <span class="filter-tab active" data-status="">All</span>
-        <span class="filter-tab" data-status="Pending">Pending</span>
-        <span class="filter-tab" data-status="In Progress">In Progress</span>
-        <span class="filter-tab" data-status="Completed">Completed</span>
-        <span class="filter-tab" data-status="Delivered">Delivered</span>
+        <span class="filter-tab" data-status="pending">Pending</span>
+        <span class="filter-tab" data-status="in_progress">In Progress</span>
+        <span class="filter-tab" data-status="completed">Completed</span>
+        <span class="filter-tab" data-status="delivered">Delivered</span>
     </div>
 
     <div class="card info-card">
@@ -56,17 +52,16 @@
                             <th class="py-2 fw-600 text-muted" style="font-size:.73rem;">Service Type</th>
                             <th class="py-2 fw-600 text-muted" style="font-size:.73rem;">Check-In</th>
                             <th class="py-2 fw-600 text-muted" style="font-size:.73rem;">Est. Delivery</th>
-                            <th class="py-2 fw-600 text-muted" style="font-size:.73rem;">Priority</th>
                             <th class="py-2 fw-600 text-muted" style="font-size:.73rem;">Status</th>
                             <th class="py-2 fw-600 text-muted" style="font-size:.73rem;"></th>
                         </tr>
                     </thead>
                     <tbody id="jcTbody">
-                        <tr><td colspan="9" class="text-center text-muted py-4">Loading...</td></tr>
+                        <tr><td colspan="8" class="text-center text-muted py-4">Loading...</td></tr>
                     </tbody>
                 </table>
             </div>
-            <div id="jcPagination" class="d-flex justify-content-between align-items-center px-3 py-2 border-top" style="font-size:.8rem;"></div>
+            <div id="jcPagination" class="d-flex justify-content-between align-items-center px-3 py-2 border-top" style="font-size:.8rem;display:none!important;"></div>
         </div>
     </div>
 </div>
@@ -74,18 +69,27 @@
 @push('scripts')
 <script>
 $(function () {
-    var base = "{{ url('/api/tvs') }}";
+    var base    = "{{ url('/api/tvs') }}";
     var webBase = "{{ url('/tvs') }}";
     var currentStatus = '';
     var searchTimer;
 
-    function statusPillClass(name) {
-        var map = { 'Pending': 'sp-pending', 'In Progress': 'sp-inprogress', 'Completed': 'sp-completed', 'Delivered': 'sp-delivered' };
-        return map[name] || 'sp-default';
+    function statusPillClass(s) {
+        if (!s) return 'sp-default';
+        var v = s.toLowerCase().replace(' ', '_');
+        var map = { 'pending': 'sp-pending', 'in_progress': 'sp-inprogress', 'completed': 'sp-completed', 'delivered': 'sp-delivered' };
+        return map[v] || 'sp-default';
     }
-    function priorityClass(p) {
-        var map = { 'Normal': 'pr-normal', 'Urgent': 'pr-urgent', 'Emergency': 'pr-emergency' };
-        return map[p] || 'pr-normal';
+
+    function statusLabel(s) {
+        if (!s) return '—';
+        var map = { 'pending': 'Pending', 'in_progress': 'In Progress', 'completed': 'Completed', 'delivered': 'Delivered' };
+        return map[s.toLowerCase()] || s;
+    }
+
+    function formatDate(d) {
+        if (!d) return '—';
+        return d.substring(0, 10);
     }
 
     function loadJc(page) {
@@ -95,24 +99,39 @@ $(function () {
         var s = $('#searchJc').val().trim();
         if (s) params.search = s;
 
+        $('#jcTbody').html('<tr><td colspan="8" class="text-center text-muted py-4">Loading...</td></tr>');
+
         $.get(base + '/job-cards', params, function(res) {
             var $tbody = $('#jcTbody');
+
             if (!res.success || !res.data.data || res.data.data.length === 0) {
-                $tbody.html('<tr><td colspan="9" class="text-center text-muted py-4" style="font-size:.82rem;">No job cards found.</td></tr>');
+                $tbody.html('<tr><td colspan="8" class="text-center text-muted py-4" style="font-size:.82rem;">No job cards found.</td></tr>');
                 $('#jcPagination').hide();
                 return;
             }
+
             var html = '';
             res.data.data.forEach(function(jc) {
+                // Vehicle: use registration_no from loaded relation, fallback to chassis_no
+                var vehicle   = (jc.vehicle && (jc.vehicle.registration_no || jc.vehicle.chassis_no)) || '—';
+                // Customer: loaded via customerParty relation (foreign key: customer_id)
+                var customer  = (jc.customer_party && jc.customer_party.name) || '—';
+                // service_type is a plain string column
+                var svcType   = jc.service_type || '—';
+                // status is a plain string column
+                var status    = jc.status || '';
+                // dates
+                var checkIn   = formatDate(jc.created_at);
+                var estDel    = formatDate(jc.estimated_delivery);
+
                 html += '<tr style="cursor:pointer;" onclick="window.location=\'' + webBase + '/job-cards/' + jc.id + '\'">' +
-                    '<td class="px-3 py-2 fw-700" style="color:#273d80;">' + (jc.job_card_no || '—') + '</td>' +
-                    '<td class="py-2">' + (jc.vehicle?.registration_no || jc.vehicle?.chassis_no || '—') + '</td>' +
-                    '<td class="py-2">' + (jc.customer_party?.name || '—') + '</td>' +
-                    '<td class="py-2">' + (jc.service_type?.name || '—') + '</td>' +
-                    '<td class="py-2 text-muted" style="font-size:.78rem;">' + (jc.check_in_date || '—') + '</td>' +
-                    '<td class="py-2 text-muted" style="font-size:.78rem;">' + (jc.estimated_delivery_date || '—') + '</td>' +
-                    '<td class="py-2"><span class="priority-badge ' + priorityClass(jc.priority) + '">' + (jc.priority || '—') + '</span></td>' +
-                    '<td class="py-2"><span class="status-pill ' + statusPillClass(jc.status?.name) + '">' + (jc.status?.name || '—') + '</span></td>' +
+                    '<td class="px-3 py-2 fw-700" style="color:#273d80;">' + (jc.job_card_number || '—') + '</td>' +
+                    '<td class="py-2">' + vehicle + '</td>' +
+                    '<td class="py-2">' + customer + '</td>' +
+                    '<td class="py-2">' + svcType + '</td>' +
+                    '<td class="py-2 text-muted" style="font-size:.78rem;">' + checkIn + '</td>' +
+                    '<td class="py-2 text-muted" style="font-size:.78rem;">' + estDel + '</td>' +
+                    '<td class="py-2"><span class="status-pill ' + statusPillClass(status) + '">' + statusLabel(status) + '</span></td>' +
                     '<td class="py-2" onclick="event.stopPropagation();"><a href="' + webBase + '/job-cards/' + jc.id + '" class="btn btn-xs" style="background:#273d80;color:#fff;border-radius:6px;font-size:.72rem;padding:2px 10px;"><i class="bx bx-show me-1"></i>Open</a></td>' +
                     '</tr>';
             });
@@ -121,13 +140,16 @@ $(function () {
             var d = res.data;
             if (d.last_page > 1) {
                 var pHtml = '<span class="text-muted">Page ' + d.current_page + ' of ' + d.last_page + ' (' + d.total + ' records)</span><div class="d-flex gap-1">';
-                if (d.current_page > 1) pHtml += '<button class="btn btn-xs btn-outline-secondary page-btn" data-page="' + (d.current_page-1) + '" style="border-radius:6px;font-size:.75rem;padding:2px 10px;">Prev</button>';
-                if (d.current_page < d.last_page) pHtml += '<button class="btn btn-xs btn-outline-secondary page-btn" data-page="' + (d.current_page+1) + '" style="border-radius:6px;font-size:.75rem;padding:2px 10px;">Next</button>';
+                if (d.current_page > 1) pHtml += '<button class="btn btn-xs btn-outline-secondary page-btn" data-page="' + (d.current_page - 1) + '" style="border-radius:6px;font-size:.75rem;padding:2px 10px;">Prev</button>';
+                if (d.current_page < d.last_page) pHtml += '<button class="btn btn-xs btn-outline-secondary page-btn" data-page="' + (d.current_page + 1) + '" style="border-radius:6px;font-size:.75rem;padding:2px 10px;">Next</button>';
                 pHtml += '</div>';
                 $('#jcPagination').html(pHtml).show();
             } else {
                 $('#jcPagination').hide();
             }
+        }).fail(function(xhr) {
+            $('#jcTbody').html('<tr><td colspan="8" class="text-center text-danger py-4" style="font-size:.82rem;">Error loading job cards. Please refresh.</td></tr>');
+            console.error('Job cards API error:', xhr.responseText);
         });
     }
 
@@ -145,7 +167,9 @@ $(function () {
         searchTimer = setTimeout(function() { loadJc(1); }, 400);
     });
 
-    $(document).on('click', '.page-btn', function() { loadJc($(this).data('page')); });
+    $(document).on('click', '.page-btn', function() {
+        loadJc($(this).data('page'));
+    });
 });
 </script>
 @endpush

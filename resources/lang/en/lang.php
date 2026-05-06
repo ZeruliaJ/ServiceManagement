@@ -16,8 +16,8 @@ return [
     // ── Left Panel (Login Page) ──────────────────────────────────
     'app_description'      => 'A secure and modern web application with multi-language support.',
     'app_tagline'          => 'Secure. Modern. Reliable.',
-    'login_headline_1'     => 'Manage Everything',
-    'login_headline_2'     => 'In One Place',
+    'login_headline_1'     => 'Service Management',
+    'login_headline_2'     => 'Application',
     'login_subtext'        => 'A secure and modern web application with multi-language support.',
     'sign_in_to'           => 'Sign In to your :app',
     'enter_email'          => 'Enter Email',

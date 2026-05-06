@@ -54,7 +54,7 @@ class VehicleController extends Controller
                 'sale_date' => $vehicle->sale_date,
                 'current_owner' => $vehicle->getCurrentOwner()?->party?->name,
                 'warranty_status' => $vehicle->getActiveWarranty() ? 'Active' : 'Inactive',
-                'last_service_date' => $vehicle->serviceHistory()->latest()->first()?->service_date,
+                'last_service_date' => $vehicle->lifetimeData()->latest()->first()?->last_service_date,
                 'is_provisional' => $vehicle->is_provisional,
                 'is_validated' => $vehicle->is_validated,
             ]
