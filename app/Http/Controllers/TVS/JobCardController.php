@@ -327,13 +327,10 @@ public function saveSignature(JobCard $jobCard, Request $request)
         });
     }
 
-    $jobCards = $query->with([
-                    'vehicle',
-                  
-                    'customerParty',  // blade uses customer_party?.name
-                   
-                    'payment',
-                ])
+   $jobCards = $query->with([
+    'vehicle.customer',  
+    'payment',
+])
                 ->latest()
                 ->paginate(15);
 

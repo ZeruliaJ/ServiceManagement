@@ -489,7 +489,8 @@ function initPartSelect2($row) {
 
 
 var partRowIndex = 0;
-var jcId  = {{ $jobCardId }};
+//var jcId  = {{ $jobCardId }};
+var jcId  = {{ $jobCard->id }};
 var base  = "{{ url('/api/tvs') }}";
 var webBase = "{{ url('/tvs') }}";
 
@@ -815,12 +816,12 @@ $('#btnAddPart').on('click', function () {
 
 
     function renderJobCard(jc) {
-        console.log("After trial checks ", jc.after_trial_checks);
-        console.log("standard checks ", jc.checks);
+       
         var statusName = jc.status?.name || '—';
       //  $('#jc-title').text('Job Card #' + (jc.job_card_no || '—'));
-      $('#jc-title').html('Job Card #' + (jc.job_card_no || '—') + ' @if(auth()->user()->warehouse) | <i class="bx bx-buildings me-1"></i>{{ auth()->user()->warehouse }} @endif');
-        $('#jc-sub').text('Vehicle: ' + (jc.vehicle?.registration_no || jc.vehicle?.chassis_no || '—') + '  |  Check-In: ' + (formatDate(jc.check_in_date) || '—'));
+    //  $('#jc-title').html('Job Card #' + (jc.job_card_no || '—') + ' @if(auth()->user()->warehouse) | <i class="bx bx-buildings me-1"></i>{{ auth()->user()->warehouse }} @endif');
+      $('#jc-title').html('Job Card #' + (jc.job_card_number || '—'));
+      $('#jc-sub').text('Vehicle: ' + (jc.vehicle?.registration_number || jc.vehicle?.chassis_number || '—') + ' | Check-In: ' + formatDate(jc.created_at));
         $('#jc-statusTag').text(statusName).removeClass().addClass('status-tag ' + statusClass(statusName));
         $('#jc-priorityTag').text(jc.priority || '—');
 

@@ -38,7 +38,7 @@
             <h6 class="mb-0 fw-700" style="color:#1e2a4a;"><i class="bx bx-file me-2" style="color:#273d80;"></i>Job Card List</h6>
             <div class="d-flex gap-2">
                 <input type="text" id="searchJc" class="form-control form-control-sm" placeholder="Search job card / vehicle / customer..." style="width:260px;border-radius:7px;font-size:.8rem;">
-                <a href="{{ route('tvs.job-cards.create') }}" class="btn btn-sm" style="background:#c0172b;color:#fff;border-radius:7px;font-size:.78rem;white-space:nowrap;"><i class="bx bx-plus me-1"></i>New Job Card</a>
+                <a href="/tvs/job-cards/create" class="btn btn-sm" style="background:#c0172b;color:#fff;border-radius:7px;font-size:.78rem;white-space:nowrap;"><i class="bx bx-plus me-1"></i>New Job Card</a>
             </div>
         </div>
         <div class="card-body p-0">
@@ -88,9 +88,10 @@ $(function () {
     }
 
     function formatDate(d) {
-        if (!d) return '—';
-        return d.substring(0, 10);
-    }
+    if (!d) return '—';
+    const date = new Date(d);
+    return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-');
+}
 
     function loadJc(page) {
         page = page || 1;
@@ -112,10 +113,11 @@ $(function () {
 
             var html = '';
             res.data.data.forEach(function(jc) {
-                // Vehicle: use registration_no from loaded relation, fallback to chassis_no
-                var vehicle   = (jc.vehicle && (jc.vehicle.registration_no || jc.vehicle.chassis_no)) || '—';
+                // Vehicle: use registration_number from loaded relation, fallback to chassis_number
+                var vehicle   = (jc.vehicle && (jc.vehicle.registration_number || jc.vehicle.chassis_number)) || '—';
                 // Customer: loaded via customerParty relation (foreign key: customer_id)
-                var customer  = (jc.customer_party && jc.customer_party.name) || '—';
+               // var customer  = (jc.customer_party && jc.customer_party.name) || '—';
+                var customer = (jc.vehicle && jc.vehicle.customer && (jc.vehicle.customer.first_name + ' ' + jc.vehicle.customer.last_name)) || '—';
                 // service_type is a plain string column
                 var svcType   = jc.service_type || '—';
                 // status is a plain string column

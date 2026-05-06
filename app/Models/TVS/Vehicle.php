@@ -95,4 +95,9 @@ class Vehicle extends Model
             ->latest()
             ->first();
     }
+
+    public function customer(): BelongsTo
+{
+    return $this->belongsTo(\App\Models\TVS\Customer::class, 'customer_id');
+}
 }

@@ -124,10 +124,19 @@ public function storeJobCard(Request $request)
     ]);
 }
 
-    public function jobCardShow($id)
-    {
-        return view('tvs.job-cards.show', ['title' => 'Job Card Detail', 'jobCardId' => $id]);
-    }
+   public function jobCardShow($id)
+{
+    $jobCard = \App\Models\TVS\JobCard::with([
+        'vehicle.customer',
+        'assignedTechnician',
+        'payment',
+    ])->findOrFail($id);
+
+    return view('tvs.job-cards.show', [
+        'title'   => 'Job Card Detail',
+        'jobCard' => $jobCard,
+    ]);
+}
 
     public function gatePasses()
     {
